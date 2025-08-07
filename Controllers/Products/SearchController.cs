@@ -40,18 +40,19 @@ namespace core8_vue_mysql.Controllers.Products
             _env = env;        
         }  
 
-        [HttpPost("/api/searchproducts")]
-        public IActionResult SearchProducts(ProductSearch prod) {
+        [HttpGet("/api/searchproducts/{page}/{key}")]
+        public IActionResult SearchProducts(int page, string key) {
             try {                
-                var products = _productService.SearchAll(prod.Search);
+                int totalpage = _productService.TotPageSearch(page, key);
+                var products = _productService.SearchAll(page, key);
                 if (products != null) {
                     var model = _mapper.Map<IList<ProductModel>>(products);
-                    return Ok(new {products=model});
+                    return Ok(new {totpage = totalpage, page = page, products=model});
                 } else {
-                    return Ok(new {statuscode=404, message="No Data found."});
+                    return BadRequest(new {statuscode=404, message="No Data found."});
                 }
             } catch(AppException ex) {
-               return Ok(new {statuscode = 404, Message = ex.Message});
+               return BadRequest(new {statuscode = 404, Message = ex.Message});
             }
         }
     }    

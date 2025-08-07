@@ -12,9 +12,9 @@ namespace core8_vue_mysql.Services
 {
     public interface IProductService {
         IEnumerable<Product> ListAll(int page);
-        IEnumerable<Product> SearchAll(string key);
+        IEnumerable<Product> SearchAll(int page, string key);
         IEnumerable<Product> Dataset();
-
+        int TotPageSearch(int page, string key);
         int TotPage();
     }
 
@@ -30,12 +30,14 @@ namespace core8_vue_mysql.Services
             _context = context;
             _appSettings = appSettings.Value;
         }        
+
         public int TotPage() {
             var perpage = 5;
             var totrecs = _context.Products.Count();
             int totpage = (int)Math.Ceiling((float)(totrecs) / perpage);
             return totpage;
         }
+
         public IEnumerable<Product> ListAll(int page)
         {
             var perpage = 5;
@@ -50,12 +52,31 @@ namespace core8_vue_mysql.Services
             return products;
         }
 
-        public IEnumerable<Product> SearchAll(string key)
-        {            
-            var columnName = $"descriptions";
-            var columnValue = new MySqlParameter("columnValue", "%" + key + "%");
-            var sql = $"SELECT * FROM [Products] WHERE {columnName} LIKE @columnValue";
-            var products = _context.Products.FromSqlRaw(sql, columnValue).ToList();
+        public int TotPageSearch(int page, string key) {
+            var perpage = 5;
+            var offset = (page -1) * perpage;     
+            var totrecs = _context.Products
+                .Where(m => EF.Functions.Like(m.Descriptions, $"%{key}%")).Count();
+                
+            // var totrecs = _context.Products.FromSqlRaw("SELECT * FROM products WHERE descriptions LIKE '%" + key + "%'")
+            // .OrderBy(b => b.Id)
+            // .Skip(offset)
+            // .Take(perpage)
+            // .ToList();
+            int totpage = (int)Math.Ceiling((float)(totrecs) / perpage);
+            return totpage;
+        }
+
+        public IEnumerable<Product> SearchAll(int page, string key)
+        {       
+            var perpage = 5;
+            var offset = (page -1) * perpage;     
+            var products = _context.Products.FromSqlRaw("SELECT * FROM products WHERE descriptions LIKE '%" + key + "%'")
+            .OrderBy(b => b.Id)
+            .Skip(offset)
+            .Take(perpage)
+            .ToList();
+
             return products;
         }
 

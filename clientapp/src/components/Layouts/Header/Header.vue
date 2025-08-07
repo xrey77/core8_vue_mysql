@@ -205,7 +205,7 @@
             sessionStorage.removeItem('USERNAME');
             sessionStorage.removeItem('TOKEN');
             sessionStorage.removeItem('USERPIC');
-          //  this.$router.push({path: '/'});
+            // this.$router.push('/');
             this.$router.go(0);
           },
         }

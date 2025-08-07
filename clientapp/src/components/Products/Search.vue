@@ -1,8 +1,7 @@
 <template>
 <div class="container mb-4">
     <h2>Search Product</h2>
-
-    <form class="row g-3" @submit.prevent="getProdsearch" autocomplete="off">
+    <form class="row g-3" @submit.prevent="getProdsearch(page)" autocomplete="off">
         <div class="col-auto">
           <input type="text" required class="form-control-sm" v-model="search" name="search" placeholder="enter Product keyword">
         </div>
@@ -10,34 +9,47 @@
           <button type="submit" class="btn btn-primary btn-sm mb-3">search</button>
         </div>
     </form>
-    
-    <div class="card-group mb-4">
 
-      <div class="card" v-for="product in prodsearch" :key="product.id">
-        <img v-bind:src="product.prod_pic" class="card-img-top product-size" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Descriptions</h5>
-          <p class="card-text">{{product.descriptions}}</p>
-      </div>
-      <div class="card-footer">
-          <p class="card-text text-danger"><span class="text-dark">PRICE :</span>&nbsp;<strong>
-            &#8369;{{product.sell_price}}
-        </strong></p>
-      </div>  
 
-      </div>
-  
-  </div>    
-  
+    <div v-if="totpage !== 0" class="container-fluid mb-4">
+        <div class="card-group">
+            <div v-for="prod in prodsearch" :key="prod.id" class="card card-size">
+                <img v-bind:src="prod.productPicture" class="card-img-top product-size" alt=""/>
+                <div class="card-body">
+                    <h5 class="card-title">Descriptions</h5>
+                    <p class="card-text">{{prod.descriptions}}</p>
+                </div>
+                <div class="card-footer price-size">
+                    <p class="card-text text-danger"><span class="text-dark">PRICE :</span>&nbsp;<strong>&#8369;{{prod.sellPrice.toFixed(2)}}</strong></p>
+                </div>  
+            </div>
+        
+        </div>    
+        <nav aria-label="Page navigation example">
+            <ul class="pagination mt-4">
+                <li class="page-item"><a @click="firstPage($event)" class="page-link" href="#">First</a></li>
+                <li class="page-item"><a @click="prevPage($event)" class="page-link" href="#">Previous</a></li>
+                <li class="page-item"><a @click="nextPage($event)" class="page-link" href="#">Next</a></li>
+                <li class="page-item"><a @click="lastPage($event)" class="page-link" href="#">Last</a></li>              
+                <li class="page-item page-link text-danger">Page&nbsp;{{page}} of&nbsp;{{totpage}}</li>
+            </ul>
+          </nav>
+    </div>
 
 </div>
 </template>
 
 <style scoped>
 
+.card-size {
+    width: 300px!important;
+}
 .product-size {
-    width: 300px;
-    height: auto;
+    width: 240px!important;
+    height: 280px!important;
+}
+.price-size {
+    width: 215px;
 }
 </style>
 
@@ -52,31 +64,62 @@
     })    
 
     export default defineComponent({
-        name: 'Search-Product',
+        name: 'Search-Page',
         data() {
             return {
-                search: null,
+                search: '',
                 prodsearch: [],
+                page: 1,
+                totpage: 0,
+                totRecs: 0,
                 errors: [],            
             }
         },
-        mounted() {
-        },
         methods: {
-            getProdsearch: function() {
-                const data = JSON.stringify({ search: this.search});
-
-                api.post("/api/searchproducts",data)
+            /* eslint-disable */
+            getProdsearch: function(page: number) {
+                api.get(`/api/searchproducts/${page}/${this.search}`)
                 .then((res) => {
+                    console.log(res.data.products);
                     this.prodsearch = res.data.products;
+                    this.totpage = res.data.totpage;
+                    this.page = res.data.page;
                 }, (error) => {
                         console.log(error.message);
                         return;
                 });
             },
-            submitSearchForm: function() {
+            nextPage: function(event: any) {
+            event.preventDefault();    
+            if (this.page == this.totpage) {
+                return;
+            }
+            this.page = this.page + 1;
+            this.getProdsearch(this.page);
+            return;
+        },
+        prevPage: function(event: any) {
+            event.preventDefault();    
+            if (this.page == 1) {
+            return;
+            }
+            this.page = this.page - 1;
+            this.getProdsearch(this.page);
+            return;    
+        },
+        firstPage: function(event: any) {
+            event.preventDefault();    
+            this.page = 1;
+            this.getProdsearch(this.page);
+            return;    
+        },
+        lastPage: function(event: any) {
+            event.preventDefault();    
+            this.page = this.totpage;
+            this.getProdsearch(this.page);
+            return;    
 
-            },
+        }            
         },   
 })
 </script>

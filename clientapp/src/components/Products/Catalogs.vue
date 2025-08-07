@@ -2,14 +2,14 @@
 <div class="container-fluid mb-4">
     <h4 class="text-center">Product Catalogs</h4>
     <div class="card-group">
-        <div v-for="prod in catalogs" :key="prod.id" class="card">
-            <img v-bind:src="prod.prod_pic" class="card-img-top" alt=""/>
+        <div v-for="prod in catalogs" :key="prod.id" class="card card-size">
+            <img v-bind:src="prod.productPicture" class="card-img-top product-size" alt=""/>
             <div class="card-body">
                 <h5 class="card-title">Descriptions</h5>
                 <p class="card-text">{{prod.descriptions}}</p>
             </div>
             <div class="card-footer">
-                <p class="card-text text-danger"><span class="text-dark">PRICE :</span>&nbsp;<strong>&#8369;{{prod.sell_price}}</strong></p>
+                <p class="card-text text-danger price-size"><span class="text-dark">PRICE :</span>&nbsp;<strong>&#8369;{{prod.sellPrice.toFixed(2)}}</strong></p>
             </div>  
         </div>
     
@@ -26,6 +26,19 @@
 </div>
 </template>
 
+<style scoped>
+
+.card-size {
+    width: 300px!important;
+}
+.product-size {
+    width: 240px!important;
+    height: 280px!important;
+}
+.price-size {
+    width: 215px;
+}
+</style>
 <script lang="ts">
     import { defineComponent } from 'vue';
 
@@ -38,7 +51,7 @@
     })    
 
     export default defineComponent({
-        name: 'Products-Catalog',
+        name: 'Catalogs-Page',
         data() {
         return {
             page: 1,
@@ -49,6 +62,7 @@
         }
     },
     mounted() {
+        /* eslint-disable */ 
         this.getCatalogs(this.page);
     },
     methods: {

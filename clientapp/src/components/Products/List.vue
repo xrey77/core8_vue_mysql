@@ -18,11 +18,11 @@
             <td>{{ item.descriptions }}</td>
             <td>{{ item.qty }}</td>
             <td>{{ item.unit }}</td>
-            <td>&#8369;{{ item.sell_price }}</td>
+            <td>&#8369;{{ item.sellPrice.toFixed(2) }}</td>
           </tr>
         </tbody>
     </table>    
-
+    <!-- return new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(rawNumber.value); -->
     <nav aria-label="Page navigation example">
         <ul class="pagination">
           <li class="page-item"><a @click="lastPage($event)" class="page-link" href="#">Last</a></li>
@@ -37,6 +37,7 @@
   </div>        
 </template>
 
+
 <script lang="ts">
 import { defineComponent } from 'vue';
 import axios from 'axios';
@@ -48,7 +49,7 @@ const api = axios.create({
 })
 
 export default defineComponent({
-    name: 'List-Products',
+    name: 'List-Page',
     data() {
         return {
             page: 1,
@@ -59,12 +60,13 @@ export default defineComponent({
         }
     },
     mounted() {
+        /* eslint-disable */ 
         this.getProducts(this.page);
     },
-    methods: {
+    methods: {        
         getProducts: function(page: number) {
             api.get(`/api/listproducts/${page}`)
-            .then((res) => {
+            .then((res) => {                
                 this.prods = res.data.products;
                 this.totpage = res.data.totpage;
                 this.page = res.data.page;
