@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("core8_vue_mysql")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+abe4d94fcd765de042bee834a601cba3397a7d26")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+28f1e63b811cdfbc297352c42eafe4ef2db3595a")]
 [assembly: System.Reflection.AssemblyProductAttribute("core8_vue_mysql")]
 [assembly: System.Reflection.AssemblyTitleAttribute("core8_vue_mysql")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

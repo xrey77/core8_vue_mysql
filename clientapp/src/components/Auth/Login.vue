@@ -1,6 +1,6 @@
 <template>
 <div>
-<div class="modal fade" id="staticLogin" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticLoginLabel" aria-hidden="true">
+<div class="modal fade" v-cloak id="staticLogin" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticLoginLabel" aria-hidden="true">
   <div class="modal-dialog modal-sm modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header bg-primary">
@@ -48,6 +48,10 @@
   #mfaModal {
     visibility: hidden;
   }
+
+  #loginMsg {
+    font-size: 12px;
+  }
 </style>
 
 <script lang="ts">
@@ -82,6 +86,7 @@
             $("#loginReset").click();
         },
         submitLogin: function() {    
+            $('input').prop('disabled', true);
             this.LoginMessage = 'Please wait...';
             const data =JSON.stringify({ username: this.Username, password: this.Password });
             api.post("/signin", data)
@@ -109,19 +114,22 @@
                           this.Password = '';
                           this.LoginMessage = '';
                         $("#loginReset").click();
-                        // window.location.reload();
-                        this.$router.go(0);
-
+                        window.setTimeout(function() {
+                          window.location.reload();
+                        }, 200);
                     }
                     return;
                 } else {
+                  $('input').prop('disabled', false);
                   this.LoginMessage = res.data.message;
                   window.setTimeout(() => {
                         this.LoginMessage = '';
+                        this.Password = '';
                     }, 3000);
                     return;
                 }
               }, (error) => {
+                    $('input').prop('disabled', false);
                     this.LoginMessage = error.message;
                     window.setTimeout(() => {
                         this.LoginMessage = '';

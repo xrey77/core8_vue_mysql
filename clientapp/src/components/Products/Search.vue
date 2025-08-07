@@ -1,6 +1,6 @@
 <template>
-<div class="container mb-4">
-    <h2>Search Product</h2>
+<div class="container-fluid mb-4">
+    <h2>Search Product</h2>    
     <form class="row g-3" @submit.prevent="getProdsearch(page)" autocomplete="off">
         <div class="col-auto">
           <input type="text" required class="form-control-sm" v-model="search" name="search" placeholder="enter Product keyword">
@@ -13,10 +13,10 @@
 
     <div v-if="totpage !== 0" class="container-fluid mb-4">
         <div class="card-group">
-            <div v-for="prod in prodsearch" :key="prod.id" class="card card-size">
+            <div v-for="prod in prodsearch" :key="prod.id" class="card">
                 <img v-bind:src="prod.productPicture" class="card-img-top product-size" alt=""/>
                 <div class="card-body">
-                    <h5 class="card-title">Descriptions</h5>
+                    <h5 class="card-title">Description</h5>
                     <p class="card-text">{{prod.descriptions}}</p>
                 </div>
                 <div class="card-footer price-size">
@@ -26,7 +26,7 @@
         
         </div>    
         <nav aria-label="Page navigation example">
-            <ul class="pagination mt-4">
+            <ul class="pagination mt-2 mb-4">
                 <li class="page-item"><a @click="firstPage($event)" class="page-link" href="#">First</a></li>
                 <li class="page-item"><a @click="prevPage($event)" class="page-link" href="#">Previous</a></li>
                 <li class="page-item"><a @click="nextPage($event)" class="page-link" href="#">Next</a></li>
@@ -40,17 +40,33 @@
 </template>
 
 <style scoped>
-
+.card-group {
+    width: 100%!important;
+}
 .card-size {
     width: 300px!important;
 }
 .product-size {
-    width: 240px!important;
-    height: 280px!important;
+    width: 220px!important;
+    height: 300px!important;
 }
 .price-size {
     width: 215px;
 }
+@media (max-width: 991.98px) {
+    .pagination {
+        font-size: 12px;
+    }
+    nav {
+        margin-bottom: 50px;
+    }
+    .price-size {
+        width: 100%;
+    }
+    .card-group {
+        width: -50px;
+    }    
+ }
 </style>
 
 <script lang="ts">

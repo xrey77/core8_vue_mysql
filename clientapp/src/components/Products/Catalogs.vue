@@ -1,11 +1,13 @@
 <template>
-<div class="container-fluid mb-4">
-    <h4 class="text-center">Product Catalogs</h4>
+    <div class="container-fluid mt-4">
+        <div class="card-header bg-light rounded hdr">
+            Product Catalogs
+        </div>        
     <div class="card-group">
-        <div v-for="prod in catalogs" :key="prod.id" class="card card-size">
+        <div v-for="prod in catalogs" :key="prod.id" class="card">
             <img v-bind:src="prod.productPicture" class="card-img-top product-size" alt=""/>
             <div class="card-body">
-                <h5 class="card-title">Descriptions</h5>
+                <h5 class="card-title">Description</h5>
                 <p class="card-text">{{prod.descriptions}}</p>
             </div>
             <div class="card-footer">
@@ -33,10 +35,15 @@
 }
 .product-size {
     width: 240px!important;
-    height: 280px!important;
+    height: 340px!important;
 }
 .price-size {
     width: 215px;
+}
+.hdr {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
 }
 </style>
 <script lang="ts">

@@ -1,6 +1,6 @@
 <template>
-    <nav v-cloak class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div v-cloak class="container-fluid">
             <router-link class="navbar-brand" to="/"><img class="logo" src="/logo.png" alt="" /></router-link>   
           <button class="navbar-toggler" type="button"  data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasWithBothOptions">
             <span class="navbar-toggler-icon"></span>
@@ -176,7 +176,6 @@
     import Register from '../../Auth/Register.vue';
     import Login from '../../Auth/Login.vue';
 
-
     export default defineComponent({
         name: 'Header-Page',
         components: {
@@ -201,13 +200,19 @@
         },
         methods: {
           logout: function() {
-            sessionStorage.removeItem('USERID');
-            sessionStorage.removeItem('USERNAME');
-            sessionStorage.removeItem('TOKEN');
-            sessionStorage.removeItem('USERPIC');
-            // this.$router.push('/');
-            this.$router.go(0);
+            /* eslint-disable */            
+            window.setTimeout(function() {
+              window.sessionStorage.removeItem('USERNAME');
+              window.sessionStorage.removeItem('TOKEN');
+              window.sessionStorage.removeItem('USERPIC');
+              window.location.reload();
+              /* this.$router.go(0);*/
+            }, 200);
+            /* this.$router.push('/');*/
           },
         }
     })
+
+
+    
 </script>
