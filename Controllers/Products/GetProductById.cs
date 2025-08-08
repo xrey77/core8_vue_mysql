@@ -1,31 +1,34 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Google.Authenticator;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 using core8_vue_mysql.Services;
+using core8_vue_mysql.Entities;
 using core8_vue_mysql.Models.dto;
 using core8_vue_mysql.Helpers;
 
 namespace core8_vue_mysql.Controllers.Products
 {
-    [ApiExplorerSettings(GroupName = "List All Products")]    
+    [ApiExplorerSettings(GroupName = "Get Product Id")]
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
-    public class ListController : ControllerBase {
+    public class GetProductById : ControllerBase {
         private IProductService _productService;
         private IMapper _mapper;
         private readonly IConfiguration _configuration;  
         private readonly IWebHostEnvironment _env;
-        private readonly ILogger<ListController> _logger;
+        private readonly ILogger<GetProductById> _logger;
 
-        public ListController(
+        public GetProductById(
             IConfiguration configuration,
             IWebHostEnvironment env,
             IProductService productService,
             IMapper mapper,
-            ILogger<ListController> logger
+            ILogger<GetProductById> logger
             )
         {
             _configuration = configuration;  
@@ -35,15 +38,14 @@ namespace core8_vue_mysql.Controllers.Products
             _env = env;        
         }  
 
-        [HttpGet("/api/listproducts/{page}")]
-        public IActionResult ListProducts(int page) {
+        [HttpGet("/api/getproductid/{id}")]
+        public IActionResult GetProductId(int id) {
             try {                
-                int totalpage = _productService.TotPage();
-                var products = _productService.ListAll(page);
-                var model = _mapper.Map<IList<ProductModel>>(products);
-                return Ok(new {totpage = totalpage, page = page, products=model});
+                var prod = _productService.GetProductById(id);
+                var prods = _mapper.Map<ProductModel>(prod);
+                return Ok(new {statuscode = 200, message = "Product found", product = prods});
             } catch(AppException ex) {
-               return BadRequest(new {statuscode = 404, Message = ex.Message});
+               return BadRequest(new {statuscode = 400, Message = ex.Message});
             }
         }
     }    

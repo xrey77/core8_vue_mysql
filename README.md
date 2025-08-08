@@ -1,15 +1,16 @@
 SPA - Single Page Application
-.NET NET CORE 8, VueJS 3(typescript) and MySql start-up project
+.NET NET CORE 8 CLI, VueJS 3 CLI (typescript) and MySql start-up project
 
 Requirements:
-1. Node 18.12.0 and NPM 8.19.2
-2. @vue/cli 5.0.8
-3. Dotnet Core v8.0.204
-4. MySql 8.0.25 Server Docker Container
-5. Bootstrap 5.3.7
-6. FontAwesome @fortawesome/free-solid-svg-icons@7.0.0
-7. Visual Studio Code
-8. Install Google Authenticator in your Mobile Phone
+1. Knowledge in C#, @vue/cli 5.0.8 and typescript
+2. Node 18.12.0 and NPM 8.19.2
+3. @vue/cli 5.0.8
+4. Dotnet Core v8.0.204 CLI
+5. MySql 8.0.25 Server Docker Container
+6. Bootstrap 5.3.7 and JQuery
+7. FontAwesome @fortawesome/free-solid-svg-icons@7.0.0
+8. Visual Studio Code
+9. Install Google Authenticator in your Mobile Phone
 
 Features :
 1. Authentication and Authorization

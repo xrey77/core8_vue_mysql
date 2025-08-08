@@ -1,6 +1,9 @@
 using System;
 using System.IO;
 using System.Text;
+// using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -27,9 +30,49 @@ builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "DIEBOLD-NIXDORF", Description="RESTful API Documentation", Version = "v1" });
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
+            Scheme = "Bearer",
+            Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+        });
+
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new string[] { }
+            }
+        });
+
+        c.TagActionsBy(api =>
+            {
+                if (api.GroupName != null)
+                {
+                    return new[] { api.GroupName };
+                }
+                throw new InvalidOperationException("Unable to determine tag for endpoint.");
+            });
+        c.DocInclusionPredicate((name, api) => true);        
+    });
+
+
 builder.Services.AddSpaStaticFiles(options => { options.RootPath = "clientapp/dist"; });
 builder.Services.AddRazorPages();
+builder.Services.AddCors();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -46,35 +89,26 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
-builder.Services.AddCors();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IJWTTokenServices, JWTServiceManage>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
-
+app.UseDeveloperExceptionPage();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "");
-    });    
-    
+    });        
     app.UseHsts();
-
-
-}
-else
-{
-    app.UseExceptionHandler("/Home/Error");
 }
 app.UseHttpsRedirection();
+app.UseCors( options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors( options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseStaticFiles(); // Serve static files from wwwroot
 
 app.UseStatusCodePages(async context =>
@@ -100,15 +134,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
 
-app.MapFallbackToFile("index.html");
-
-
-// app.UseSpa(spa =>
-//      {
-//          if (app.Environment.IsDevelopment())
-//              spa.Options.SourcePath = "clientapp/";
-//          else
-//              spa.Options.SourcePath = "dist";
-//      });
 app.Run();
 

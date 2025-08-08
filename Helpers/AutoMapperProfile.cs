@@ -14,6 +14,7 @@ namespace core8_vue_mysql.Helpers
             CreateMap<UserUpdate, User>();
             CreateMap<UserPasswordUpdate, User>();
             CreateMap<Product, ProductModel>();
+            CreateMap<ProductModel, Product>();
 
         }
     }

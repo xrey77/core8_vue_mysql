@@ -18,41 +18,36 @@ namespace core8_vue_mysql.Controllers.Users
     [Route("api/[controller]")]
     public class GetallController : ControllerBase {
        
+        private IUserService _userService;
+        private IMapper _mapper;
+        private readonly IConfiguration _configuration;  
+        private readonly IWebHostEnvironment _env;
+        private readonly ILogger<GetallController> _logger;
 
-    private IUserService _userService;
-
-    private IMapper _mapper;
-    private readonly IConfiguration _configuration;  
-
-    private readonly IWebHostEnvironment _env;
-
-    private readonly ILogger<GetallController> _logger;
-
-    public GetallController(
-        IConfiguration configuration,
-        IWebHostEnvironment env,
-        IUserService userService,
-        IMapper mapper,
-        ILogger<GetallController> logger
-        )
-    {
-        _configuration = configuration;  
-        _userService = userService;
-        _mapper = mapper;
-        _logger = logger;
-        _env = env;        
-    }  
+        public GetallController(
+            IConfiguration configuration,
+            IWebHostEnvironment env,
+            IUserService userService,
+            IMapper mapper,
+            ILogger<GetallController> logger
+            )
+        {
+            _configuration = configuration;  
+            _userService = userService;
+            _mapper = mapper;
+            _logger = logger;
+            _env = env;        
+        }  
 
         [HttpGet]
         public IActionResult getAllusers() {
             try {                
                 var user = _userService.GetAll();
                 var model = _mapper.Map<IList<UserModel>>(user);
-                return Ok(model);
+                return Ok(model); 
             } catch(AppException ex) {
-               return Ok(new {statuscode = 404, Message = ex.Message});
+                return BadRequest(new {statuscode = 400, Message = ex.Message});
             }
         }
     }
-    
 }

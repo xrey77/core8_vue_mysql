@@ -15,16 +15,16 @@ function list_child_processes () {
     fi;
 }
 
-ps 5134;
+ps 881;
 while [ $? -eq 0 ];
 do
   sleep 1;
-  ps 5134 > /dev/null;
+  ps 881 > /dev/null;
 done;
 
-for child in $(list_child_processes 5140);
+for child in $(list_child_processes 889);
 do
   echo killing $child;
   kill -s KILL $child;
 done;
-rm /Users/reynald/My-Programs/DotnetCore/core8_vue_mysql/bin/Debug/net8.0/10ddf7a039ab4c539f3b9c739221f1f0.sh;
+rm /Users/reynald/My-Programs/DotnetCore/core8_vue_mysql/bin/Debug/net8.0/af355c3bec5c421db9e43e0f08ae3256.sh;

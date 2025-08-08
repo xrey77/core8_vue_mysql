@@ -8,6 +8,7 @@ using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authorization;
 using System;
 using core8_vue_mysql.Models.dto;
 using core8_vue_mysql.Entities;
@@ -18,6 +19,7 @@ namespace core8_vue_mysql.Controllers.Auth
 {
     
 [ApiExplorerSettings(GroupName = "Sign-in to User Account")]
+[AllowAnonymous] 
 [ApiController]
 [Route("[controller]")]
 public class LoginController : ControllerBase
@@ -76,7 +78,7 @@ public class LoginController : ControllerBase
 
                     return Ok(new { 
                         statuscode = 200,
-                        message = "Login Successfull, please wait..",
+                        message = "Login Successfull..",
                         id = xuser.Id,
                         lastname = xuser.LastName,
                         firstname = xuser.FirstName,

@@ -55,8 +55,6 @@ namespace core8_vue_mysql.Services
         {
             var users = _context.Users.ToList();
             return users;
-
-            // throw new NotImplementedException();
         }
 
         public User GetById(int id)
@@ -71,9 +69,10 @@ namespace core8_vue_mysql.Services
         public void UpdateProfile(User userParam)
         {
             var user = _context.Users.Find(userParam.Id);
-            if (user == null)
+            if (user is null) {
                 throw new AppException("User not found");
-
+            }
+            
             if (!string.IsNullOrWhiteSpace(userParam.FirstName)) {
                 user.FirstName = userParam.FirstName;
             }

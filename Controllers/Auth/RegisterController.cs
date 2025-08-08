@@ -9,6 +9,7 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
 using core8_vue_mysql.Models.dto;
 using core8_vue_mysql.Services;
 using core8_vue_mysql.Entities;
@@ -18,6 +19,7 @@ namespace core8_vue_mysql.Controllers.Auth
 {
     
 [ApiExplorerSettings(GroupName = "Sign-up or Account Registration")]
+[AllowAnonymous]
 [ApiController]
 [Route("[controller]")]
 public class RegisterController : ControllerBase
@@ -68,7 +70,8 @@ public class RegisterController : ControllerBase
                 // IF YOU WISH TO USE USER EMAIL ACTIVATION, JUST UNCOMMENT _emailService.sendMail
                 // _emailService.sendMail(emailaddress, fullname, subject, htmlmsg);
                 // and comment  user.Isactivated = 1;    
-                return Ok(new {statuscode = 200, message = "Please check your e-mail inbox and click button activation"});
+                // return Ok(new {statuscode = 200, message = "Please check your e-mail inbox and click button activation"});
+                return Ok(new {statuscode = 200, message = "You have registered successfully..."});
             }
             catch (AppException ex)
             {
