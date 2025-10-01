@@ -37,7 +37,6 @@
   left: -100%;
   transform: translate(0, 0);
 }
-/* this one is actually not needed at all */
 .slide-img-leave-from {
   transform: translate(0, 0);
 }
@@ -91,7 +90,6 @@
             const data =JSON.stringify({ username: this.Username, password: this.Password });
             api.post("/signin", data)
             .then((res) => {
-                if (res.data.statuscode == 200) {
                     this.LoginMessage = res.data.message;
                     if (res.data.qrcodeurl !== null) {
                         sessionStorage.setItem('USERID',res.data.id);
@@ -118,19 +116,9 @@
                           window.location.reload();
                         }, 200);
                     }
-                    return;
-                } else {
-                  $('input').prop('disabled', false);
-                  this.LoginMessage = res.data.message;
-                  window.setTimeout(() => {
-                        this.LoginMessage = '';
-                        this.Password = '';
-                    }, 3000);
-                    return;
-                }
-              }, (error) => {
+              }, (error: any) => {
                     $('input').prop('disabled', false);
-                    this.LoginMessage = error.message;
+                    this.LoginMessage = error.response.data.message;
                     window.setTimeout(() => {
                         this.LoginMessage = '';
                     }, 3000);

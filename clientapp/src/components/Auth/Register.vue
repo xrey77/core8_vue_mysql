@@ -107,18 +107,12 @@
               username: this.username, password: this.password });
             api.post("/signup", data)
             .then((res) => {
-                if (res.data.statuscode == 200) {
-                    this.registerMsg = res.data.message;
-                    return;
-                } else {
                   this.registerMsg = res.data.message;
                   window.setTimeout(() => {
                     this.registerMsg = '';
                   }, 3000);
-                  return;
-                }
-              }, (error) => {
-                    this.registerMsg = error.message;
+              }, (error: any) => {
+                    this.registerMsg = error.response.data.message;
                     window.setTimeout(() => {
                     this.registerMsg = '';
                   }, 3000);

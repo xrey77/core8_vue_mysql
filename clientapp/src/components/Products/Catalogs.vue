@@ -3,6 +3,7 @@
         <div class="card-header bg-light rounded hdr">
             Product Catalogs
         </div>        
+        <div class="text-danger">{{message}}</div>
     <div class="card-group">
         <div v-for="prod in catalogs" :key="prod.id" class="card">
             <img v-bind:src="prod.productPicture" class="card-img-top product-size" alt=""/>
@@ -62,6 +63,7 @@
         data() {
         return {
             page: 1,
+            message: '',
             totpage: 0,
             totRecs: 0,
             catalogs: [],
@@ -79,8 +81,11 @@
                 this.catalogs = res.data.products;
                 this.totpage = res.data.totpage;
                 this.page = res.data.page;
-            }, (error) => {
-                    console.log(error.message);
+            }, (error: any) => {
+                    this.message = error.reseponse.data.message;
+                    window.setTimeout(function() {
+                          window.location.reload();
+                        }, 3000);                    
                     return;
             });
         },

@@ -62,28 +62,18 @@
             const data =JSON.stringify({ id: this.Userid, otp: this.Otpcode });
             api.post("/api/validateotp", data)
             .then((res) => {
-                if (res.data.statuscode == 200) {
-                    this.OtpMessage = res.data.message;
-                    sessionStorage.setItem("USERNAME", res.data.username);
-                    $("#mfaReset").click();
-                    window.setTimeout(() => {
-                      this.OtpMessage = '';
-                      window.location.reload();
-                    }, 3000);
-                    return;
-                } else {
                   this.OtpMessage = res.data.message;
+                  sessionStorage.setItem("USERNAME", res.data.username);
+                  $("#mfaReset").click();
                   window.setTimeout(() => {
                     this.OtpMessage = '';
-                    }, 3000);
-                    return;
-                }
-              }, (error) => {
-                    this.OtpMessage = error.message;
+                    window.location.reload();
+                  }, 3000);
+              }, (error: any) => {
+                    this.OtpMessage = error.response.data.message;
                     window.setTimeout(() => {
                     this.OtpMessage = '';
                     }, 3000);
-                    return;
             });
 
         },

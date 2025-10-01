@@ -1,6 +1,7 @@
 <template>
 <div class="container-fluid mb-4">
     <h2>Search Product</h2>    
+    <div class="text-danger">{{message}}</div>
     <form class="row g-3" @submit.prevent="getProdsearch(page)" autocomplete="off">
         <div class="col-auto">
           <input type="text" required class="form-control-sm" v-model="search" name="search" placeholder="enter Product keyword">
@@ -85,6 +86,7 @@
             return {
                 search: '',
                 prodsearch: [],
+                message: '',
                 page: 1,
                 totpage: 0,
                 totRecs: 0,
@@ -100,8 +102,8 @@
                     this.prodsearch = res.data.products;
                     this.totpage = res.data.totpage;
                     this.page = res.data.page;
-                }, (error) => {
-                        console.log(error.message);
+                }, (error: any) => {
+                        this.message = error.response.data.message;
                         return;
                 });
             },

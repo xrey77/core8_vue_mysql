@@ -52,7 +52,7 @@ namespace core8_vue_mysql.Controllers.Users
             }
             catch (AppException ex)
             {
-                return BadRequest(new { statuscode = 404, message = ex.Message });
+                return BadRequest(new { statuscode = 400, message = ex.Message });
             }
         }
 

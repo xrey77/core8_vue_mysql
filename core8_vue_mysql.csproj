@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>disable</Nullable>
-    <RootNamespace>core7_vue3_azure</RootNamespace>
+    <RootNamespace>core8_vue_mysql</RootNamespace>
     <UserSecretsId>f9396720-bffe-4413-bb8b-cc025ba5eb84</UserSecretsId>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>

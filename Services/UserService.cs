@@ -32,7 +32,9 @@ namespace core8_vue_mysql.Services
         .AddEnvironmentVariables()
         .Build();
 
-        public UserService(ApplicationDbContext context,IOptions<AppSettings> appSettings)
+        public UserService(
+            ApplicationDbContext context,
+            IOptions<AppSettings> appSettings)
         {
             _context = context;
             _appSettings = appSettings.Value;

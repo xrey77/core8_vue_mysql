@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <h1 class="text-center">Product List</h1>
-
+    <div class="text-danger">{{message}}</div>
     <table class="table">
         <thead>
           <tr>
@@ -55,6 +55,7 @@ export default defineComponent({
             page: 1,
             totpage: 0,
             totRecs: 0,
+            message: '',
             prods: [],
             errors: [],            
         }
@@ -70,8 +71,8 @@ export default defineComponent({
                 this.prods = res.data.products;
                 this.totpage = res.data.totpage;
                 this.page = res.data.page;
-            }, (error) => {
-                    console.log(error.message);
+            }, (error: any) => {
+                    this.message = error.response.data.message;
                     return;
             });
         },

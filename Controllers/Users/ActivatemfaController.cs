@@ -57,7 +57,7 @@ namespace core8_vue_mysql.Controllers.Users
                         message="2-Factor Authenticator has been enabled.",
                         qrcode=imageUrl});
                 } else {
-                    return Ok(new {statuscode = 404, message="User not found."});
+                    return NotFound(new {statuscode = 404, message="User not found."});
                 }
 
             } else {

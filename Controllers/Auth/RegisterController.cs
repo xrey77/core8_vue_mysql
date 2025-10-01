@@ -71,11 +71,11 @@ public class RegisterController : ControllerBase
                 // _emailService.sendMail(emailaddress, fullname, subject, htmlmsg);
                 // and comment  user.Isactivated = 1;    
                 // return Ok(new {statuscode = 200, message = "Please check your e-mail inbox and click button activation"});
-                return Ok(new {statuscode = 200, message = "You have registered successfully..."});
+                return Ok(new {statuscode = 201, message = "You have registered successfully..."});
             }
             catch (AppException ex)
             {
-                return Ok(new { statuscode = 404, message = ex.Message });
+                return BadRequest(new { statuscode = 400, message = ex.Message });
             }
     }
 

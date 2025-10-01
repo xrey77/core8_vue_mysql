@@ -212,8 +212,8 @@ export default defineComponent({
                   this.profileMsg = res.data.message;
                     return;
                 }
-              }, (error) => {
-                    this.profileMsg = error.message;
+              }, (error: any) => {
+                    this.profileMsg = error.response.data.message;
                     return;
             });
 
@@ -241,8 +241,8 @@ export default defineComponent({
                     }, 3000);
                     return;
                 }
-              }, (error) => {
-                    this.profileMsg = error.message;
+              }, (error: any) => {
+                    this.profileMsg = error.response.data.message;
                     window.setTimeout(() => {
                         this.profileMsg = '';
                     }, 3000);
@@ -277,21 +277,12 @@ export default defineComponent({
             Authorization: `Bearer ${this.token}`
             }} )
             .then((res) => {
-                if (res.data.statuscode == 200) {
                     this.profileMsg = res.data.message;
                     window.setTimeout(() => {
                         this.profileMsg = '';
                     }, 3000);
-                    return;
-                } else {
-                  this.profileMsg = res.data.message;
-                  window.setTimeout(() => {
-                        this.profileMsg = '';
-                    }, 3000);
-                    return;
-                }
-              }, (error) => {
-                    this.profileMsg = error.message;
+              }, (error: any) => {
+                    this.profileMsg = error.response.data.message;
                     window.setTimeout(() => {
                         this.profileMsg = '';
                     }, 3000);
@@ -318,23 +309,14 @@ export default defineComponent({
                 Authorization: `Bearer ${this.token}`
                 }} )
                 .then((res) => {
-                    if (res.data.statuscode == 200) {
-                        this.profileMsg = res.data.message;
-                        window.setTimeout(() => {
-                            sessionStorage.setItem('USERPIC',res.data.profilepic);
-                            this.profileMsg = '';
-                            window.location.reload();
-                        }, 3000);
-                        return;
-                    } else {
                     this.profileMsg = res.data.message;
                     window.setTimeout(() => {
-                            this.profileMsg = '';
-                        }, 3000);
-                        return;
-                    }
-                }, (error) => {
-                        this.profileMsg = error.message;
+                        sessionStorage.setItem('USERPIC',res.data.profilepic);
+                        this.profileMsg = '';
+                        window.location.reload();
+                    }, 3000);
+                }, (error: any) => {
+                        this.profileMsg = error.response.data.message;
                         window.setTimeout(() => {
                             this.profileMsg = '';
                         }, 3000);
@@ -380,22 +362,14 @@ export default defineComponent({
             Authorization: `Bearer ${this.token}`
             }} )
             .then((res) => {
-                if (res.data.statuscode == 200) {
                     this.qrcodeurl = res.data.qrcode;
                     this.profileMsg = res.data.message;
                     window.setTimeout(() => {
                         this.profileMsg = '';
                     }, 3000);
                     return;
-                } else {
-                  this.profileMsg = res.data.message;
-                  window.setTimeout(() => {
-                        this.profileMsg = '';
-                    }, 3000);
-                    return;
-                }
-              }, (error) => {
-                    this.profileMsg = error.message;
+              }, (error: any) => {
+                    this.profileMsg = error.response.data.message;
                     window.setTimeout(() => {
                         this.profileMsg = '';
                     }, 3000);
@@ -408,22 +382,14 @@ export default defineComponent({
                 Authorization: `Bearer ${this.token}`
             }} )
             .then((res) => {
-                if (res.data.statuscode == 200) {
                     this.qrcodeurl = '';
                     this.profileMsg = res.data.message;
                     window.setTimeout(() => {
                         this.profileMsg = '';
                     }, 3000);
                     return;
-                } else {
-                  this.profileMsg = res.data.message;
-                  window.setTimeout(() => {
-                        this.profileMsg = '';
-                    }, 3000);
-                    return;
-                }
-              }, (error) => {
-                    this.profileMsg = error.message;
+              }, (error: any) => {
+                    this.profileMsg = error.response.data.message;
                     window.setTimeout(() => {
                         this.profileMsg = '';
                     }, 3000);
