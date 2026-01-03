@@ -17,6 +17,7 @@ namespace core8_vue_mysql.Services
     public interface IAuthService {
         User SignupUser(User userdata, string passwd);
         User SigninUser(string usrname, string pwd);
+        Role getRolename(int id);
     }
 
     public class AuthService : IAuthService
@@ -68,10 +69,15 @@ namespace core8_vue_mysql.Services
             userdata.Secretkey = secretkey.ToUpper();             
             userdata.Password = BCrypt.Net.BCrypt.HashPassword(passwd);
             userdata.Profilepic = "https://localhost:5100/users/pix.png";
-            userdata.Roles="USER";
+            userdata.RolesId = 1;
             _context.Users.Add(userdata);                
             _context.SaveChanges();
             return userdata;
+        }
+
+        public Role getRolename(int id) {
+            Role role = _context.Roles.Where(r => r.Id == id).FirstOrDefault();
+            return role;
         }
 
         public User SigninUser(string usrname, string pwd)

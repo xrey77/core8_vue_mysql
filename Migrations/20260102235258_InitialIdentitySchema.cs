@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace core8_vue_mysql.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialIdentitySchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -47,6 +47,21 @@ namespace core8_vue_mysql.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "roles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    name = table.Column<string>(type: "varchar(20)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_roles", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "users",
                 columns: table => new
                 {
@@ -58,14 +73,13 @@ namespace core8_vue_mysql.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     username = table.Column<string>(type: "varchar(20)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    password = table.Column<string>(type: "varchar(20)", nullable: false)
+                    password = table.Column<string>(type: "text", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     email = table.Column<string>(type: "varchar(100)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     mobile = table.Column<string>(type: "varchar(15)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    roles = table.Column<string>(type: "varchar(10)", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    roles_id = table.Column<int>(type: "int", nullable: false),
                     isactivated = table.Column<int>(type: "int", nullable: false),
                     isblocked = table.Column<int>(type: "int", nullable: false),
                     mailtoken = table.Column<int>(type: "int", nullable: false),
@@ -73,7 +87,7 @@ namespace core8_vue_mysql.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     profilepic = table.Column<string>(type: "varchar(100)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    secretkey = table.Column<string>(type: "varchar(200)", nullable: true)
+                    secretkey = table.Column<string>(type: "text", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     createdAt = table.Column<DateTime>(type: "timestamp", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
@@ -85,6 +99,36 @@ namespace core8_vue_mysql.Migrations
                     table.PrimaryKey("PK_users", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "UserRoles",
+                columns: table => new
+                {
+                    RolesId = table.Column<int>(type: "int", nullable: false),
+                    UsersId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserRoles", x => new { x.RolesId, x.UsersId });
+                    table.ForeignKey(
+                        name: "FK_UserRoles_roles_RolesId",
+                        column: x => x.RolesId,
+                        principalTable: "roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserRoles_users_UsersId",
+                        column: x => x.UsersId,
+                        principalTable: "users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRoles_UsersId",
+                table: "UserRoles",
+                column: "UsersId");
         }
 
         /// <inheritdoc />
@@ -92,6 +136,12 @@ namespace core8_vue_mysql.Migrations
         {
             migrationBuilder.DropTable(
                 name: "products");
+
+            migrationBuilder.DropTable(
+                name: "UserRoles");
+
+            migrationBuilder.DropTable(
+                name: "roles");
 
             migrationBuilder.DropTable(
                 name: "users");

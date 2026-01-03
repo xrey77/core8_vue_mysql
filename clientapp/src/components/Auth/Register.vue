@@ -112,7 +112,11 @@
                     this.registerMsg = '';
                   }, 3000);
               }, (error: any) => {
-                    this.registerMsg = error.response.data.message;
+                    if (error.response) {
+                      this.registerMsg = error.response.data.message;
+                    } else {
+                      this.registerMsg = error.message;
+                    }
                     window.setTimeout(() => {
                     this.registerMsg = '';
                   }, 3000);

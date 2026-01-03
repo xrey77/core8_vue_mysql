@@ -12,8 +12,8 @@ using core8_vue_mysql.Helpers;
 namespace core8_vue_mysql.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250805083711_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260102235258_InitialIdentitySchema")]
+    partial class InitialIdentitySchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,21 @@ namespace core8_vue_mysql.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+
+            modelBuilder.Entity("RoleUser", b =>
+                {
+                    b.Property<int>("RolesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RolesId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("UserRoles", (string)null);
+                });
 
             modelBuilder.Entity("core8_vue_mysql.Entities.Product", b =>
                 {
@@ -92,6 +107,24 @@ namespace core8_vue_mysql.Migrations
                     b.ToTable("products");
                 });
 
+            modelBuilder.Entity("core8_vue_mysql.Entities.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("roles");
+                });
+
             modelBuilder.Entity("core8_vue_mysql.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -140,7 +173,7 @@ namespace core8_vue_mysql.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("varchar(20)")
+                        .HasColumnType("text")
                         .HasColumnName("password");
 
                     b.Property<string>("Profilepic")
@@ -151,12 +184,12 @@ namespace core8_vue_mysql.Migrations
                         .HasColumnType("text")
                         .HasColumnName("qrcodeurl");
 
-                    b.Property<string>("Roles")
-                        .HasColumnType("varchar(10)")
-                        .HasColumnName("roles");
+                    b.Property<int>("RolesId")
+                        .HasColumnType("int")
+                        .HasColumnName("roles_id");
 
                     b.Property<string>("Secretkey")
-                        .HasColumnType("varchar(200)")
+                        .HasColumnType("text")
                         .HasColumnName("secretkey");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -174,6 +207,21 @@ namespace core8_vue_mysql.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("users");
+                });
+
+            modelBuilder.Entity("RoleUser", b =>
+                {
+                    b.HasOne("core8_vue_mysql.Entities.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RolesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("core8_vue_mysql.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

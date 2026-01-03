@@ -34,8 +34,8 @@ namespace core8_vue_mysql.Entities
         [Column("mobile",TypeName="varchar(15)")]
         public string Mobile { get; set; }
 
-        [Column("roles",TypeName="varchar(10)")]
-        public string Roles { get; set; }
+        [Column("roles_id")] 
+        public int RolesId { get; set; } 
 
         [Column("isactivated")]
         public int Isactivated {get; set;}
@@ -64,6 +64,8 @@ namespace core8_vue_mysql.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         [DefaultValue("getutcdate()")]
         public DateTime UpdatedAt  {get; set;}
+
+        public ICollection<Role> Roles { get; set; } = new List<Role>();
 
     }
 }

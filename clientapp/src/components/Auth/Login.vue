@@ -118,7 +118,11 @@
                     }
               }, (error: any) => {
                     $('input').prop('disabled', false);
-                    this.LoginMessage = error.response.data.message;
+                    if (error.response) {
+                      this.LoginMessage = error.response.data.message;
+                    } else {
+                      this.LoginMessage = error.message;
+                    }
                     window.setTimeout(() => {
                         this.LoginMessage = '';
                     }, 3000);

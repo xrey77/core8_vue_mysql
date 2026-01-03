@@ -103,7 +103,11 @@
                     this.totpage = res.data.totpage;
                     this.page = res.data.page;
                 }, (error: any) => {
-                        this.message = error.response.data.message;
+                        if (error.response) {
+                            this.message = error.response.data.message;
+                        } else {
+                            this.message = error.message;
+                        }
                         return;
                 });
             },

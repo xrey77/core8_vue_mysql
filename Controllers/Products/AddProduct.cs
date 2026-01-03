@@ -53,10 +53,10 @@ namespace core8_vue_mysql.Controllers.Products
                 prods.AlertStocks = model.AlertStocks;
                 prods.CriticalStocks = model.CriticalStocks;
                 prods.CreatedAt = now;
-                _productService.CreateProduct(prods);
-                return Ok(new {statuscode = 201, message = "New product has been added to the database."});
+                _productService.CreateProduct(prods);                
+                return Ok(new { message = "New product has been added to the database."});
             } catch(AppException ex) {
-               return BadRequest(new {statuscode = 400, Message = ex.Message});
+               return BadRequest(new {Message = ex.Message});
             }
         }
     }    

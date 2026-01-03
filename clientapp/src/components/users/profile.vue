@@ -209,11 +209,20 @@ export default defineComponent({
                     this.qrcodeurl = res.data.user.qrcodeurl;
                     return;
                 } else {
-                  this.profileMsg = res.data.message;
-                    return;
+                    this.profileMsg = res.data.message;
+                    setTimeout(() => {
+                        this.profileMsg = '';
+                    }, 3000);
                 }
               }, (error: any) => {
-                    this.profileMsg = error.response.data.message;
+                    if (error.response) {
+                        this.profileMsg = error.response.data.message;
+                    } else {
+                        this.profileMsg = error.message;
+                    }                 
+                    setTimeout(() => {
+                        this.profileMsg = '';
+                    }, 3000);
                     return;
             });
 
@@ -242,7 +251,11 @@ export default defineComponent({
                     return;
                 }
               }, (error: any) => {
-                    this.profileMsg = error.response.data.message;
+                    if (error.response) {
+                        this.profileMsg = error.response.data.message;
+                    } else {
+                        this.profileMsg = error.message;
+                    }                                 
                     window.setTimeout(() => {
                         this.profileMsg = '';
                     }, 3000);
@@ -282,7 +295,11 @@ export default defineComponent({
                         this.profileMsg = '';
                     }, 3000);
               }, (error: any) => {
-                    this.profileMsg = error.response.data.message;
+                    if (error.response) {
+                        this.profileMsg = error.response.data.message;
+                    } else {
+                        this.profileMsg = error.message;
+                    }                                 
                     window.setTimeout(() => {
                         this.profileMsg = '';
                     }, 3000);
@@ -316,11 +333,15 @@ export default defineComponent({
                         window.location.reload();
                     }, 3000);
                 }, (error: any) => {
+                    if (error.response) {
                         this.profileMsg = error.response.data.message;
-                        window.setTimeout(() => {
+                    } else {
+                        this.profileMsg = error.message;
+                    }                 
+                    window.setTimeout(() => {
                             this.profileMsg = '';
-                        }, 3000);
-                        return;
+                    }, 3000);
+                    return;
                 });
           } //end-selectedFile
 
@@ -369,7 +390,11 @@ export default defineComponent({
                     }, 3000);
                     return;
               }, (error: any) => {
-                    this.profileMsg = error.response.data.message;
+                    if (error.response) {
+                        this.profileMsg = error.response.data.message;
+                    } else {
+                        this.profileMsg = error.message;
+                    }                                 
                     window.setTimeout(() => {
                         this.profileMsg = '';
                     }, 3000);
@@ -389,7 +414,11 @@ export default defineComponent({
                     }, 3000);
                     return;
               }, (error: any) => {
-                    this.profileMsg = error.response.data.message;
+                    if (error.response) {
+                        this.profileMsg = error.response.data.message;
+                    } else {
+                        this.profileMsg = error.message;
+                    }                                 
                     window.setTimeout(() => {
                         this.profileMsg = '';
                     }, 3000);

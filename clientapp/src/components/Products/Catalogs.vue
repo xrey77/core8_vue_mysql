@@ -82,7 +82,11 @@
                 this.totpage = res.data.totpage;
                 this.page = res.data.page;
             }, (error: any) => {
-                    this.message = error.reseponse.data.message;
+                    if (error.response) {
+                        this.message = error.reseponse.data.message;
+                    } else {
+                        this.message = error.message;
+                    }
                     window.setTimeout(function() {
                           window.location.reload();
                         }, 3000);                    

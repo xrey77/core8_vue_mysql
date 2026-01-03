@@ -19,9 +19,10 @@ Features :
 3. User Profile Picture upload/update
 4. Product Listings and Pagination
 5. User Account Activation via Email
-6. Swagger RESTful API Documentation
+6. Swagger RESTful API Documentation, https://localhost:7241/swagger/index.html
+
 
 If you want to test, do the following:
 1. Setup MySql Server 8.0.25
 2. Change Username and Password in appsettings.json, MySql connection settings
-3. Run, dotnet ef migrations add InitialCreate and dotnet ef database update
+3. Run, dotnet ef migrations add InitialIdentitySchema and dotnet ef database update
