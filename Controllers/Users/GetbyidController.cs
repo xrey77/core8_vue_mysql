@@ -36,9 +36,9 @@ namespace core8_vue_mysql.Controllers.Users {
             try {
                 var user = _userService.GetById(id);
                 var model = _mapper.Map<UserModel>(user);
-                return Ok(new {message = "User found, please wait.",user = model});
+                return Ok(new {message = "User found, retrieving record, please wait.",user = model});
             } catch(AppException ex) {
-                return BadRequest(new {statuscode = 400, message = ex.Message});
+                return BadRequest(new {message = ex.Message});
             }
         }
     }

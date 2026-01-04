@@ -52,7 +52,7 @@ namespace core8_vue_mysql.Controllers.Products
                     return NotFound(new { message="No Data found."});
                 }
             } catch(AppException ex) {
-               return BadRequest(new {Message = ex.Message});
+               return BadRequest(new {modelessage = ex.Message});
             }
         }
     }    

@@ -53,7 +53,7 @@ namespace core8_vue_mysql.Controllers.Users
                     var imageUrl = setupInfo.QrCodeSetupImageUrl;
                     _userService.ActivateMfa(id, true, imageUrl);
                     return Ok(new {
-                        message="2-Factor Authenticator has been enabled.",
+                        message="Multi-Factor Authenticator has been enabled.",
                         qrcode=imageUrl});
                 } else {
                     return NotFound(new {message="User not found."});
@@ -61,7 +61,7 @@ namespace core8_vue_mysql.Controllers.Users
 
             } else {
                 _userService.ActivateMfa(id, false, null);
-                return Ok(new {message="2-Factor Authenticator has been disabled."});
+                return Ok(new {message="Multi-Factor Authenticator has been disabled."});
             }
         }
     }    

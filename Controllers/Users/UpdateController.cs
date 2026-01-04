@@ -52,7 +52,7 @@ namespace core8_vue_mysql.Controllers.Users
             try
             {
                 _userService.UpdateProfile(user);
-                return Ok(new {message="Your profile has been updated.",user = model});
+                return Ok(new {message="Your profile has been updated successfully.",user = model});
             }
             catch (AppException ex)
             {

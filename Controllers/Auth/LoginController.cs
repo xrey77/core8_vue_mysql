@@ -77,7 +77,7 @@ public class LoginController : ControllerBase
 
                     var role = _authService.getRolename(xuser.RolesId);
                     return Ok(new { 
-                        message = "Login Successfull..",
+                        message = "You have logged-in successfully..",
                         id = xuser.Id,
                         lastname = xuser.LastName,
                         firstname = xuser.FirstName,

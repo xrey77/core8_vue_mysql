@@ -46,7 +46,7 @@ namespace core8_vue_mysql.Controllers.Users
                 var model = _mapper.Map<IList<UserModel>>(user);
                 return Ok(model); 
             } catch(AppException ex) {
-                return BadRequest(new {Message = ex.Message});
+                return BadRequest(new {message = ex.Message});
             }
         }
     }

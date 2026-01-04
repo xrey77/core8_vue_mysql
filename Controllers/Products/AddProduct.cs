@@ -56,7 +56,7 @@ namespace core8_vue_mysql.Controllers.Products
                 _productService.CreateProduct(prods);                
                 return Ok(new { message = "New product has been added to the database."});
             } catch(AppException ex) {
-               return BadRequest(new {Message = ex.Message});
+               return BadRequest(new {message = ex.Message});
             }
         }
     }    

@@ -65,7 +65,7 @@ namespace core8_vue_mysql.Controllers.Users
                             _userService.UpdatePicture(model.Id, file);                            
                         }
                         return Ok(new { 
-                            message = "Profile Picture has been updated.",
+                            message = "Your Profile Picture has been changed successfully.",
                             profilepic = file});                        
                     }
                     catch (Exception ex)

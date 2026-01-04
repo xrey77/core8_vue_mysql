@@ -44,7 +44,7 @@ namespace core8_vue_mysql.Controllers.Users
             try
             {
                _userService.Delete(id);
-            return Ok();
+            return Ok(new { message = $"User ID # {id} has been deleted successfully." });               
            }
             catch (AppException ex)
             {

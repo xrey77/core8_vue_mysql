@@ -49,10 +49,10 @@ namespace core8_vue_mysql.Controllers.Auth
                     bool isValid = twoFactor.ValidateTwoFactorPIN(secret, otp , false);
                     if (isValid)
                     {
-                        return Ok(new { message = "OTP validation successfull, pls. wait.", username=user.UserName});
+                        return Ok(new { message = "OTP code has been validated successfully, pls. wait.", username=user.UserName});
                     } 
                 }
-                return NotFound(new {message = "Invalid OTP Code." });
+                return NotFound(new {message = "Invalid OTP Code, please try again." });
             }catch(Exception ex) {
                 return BadRequest(new { message = ex.Message});
             }

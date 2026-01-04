@@ -57,7 +57,7 @@ namespace core8_vue_mysql.Controllers.Products
                 _productService.ProductUpdate(prods);
                 return Ok(new {message = "Product has been updated."});
             } catch(AppException ex) {
-               return BadRequest(new { Message = ex.Message});
+               return BadRequest(new { message = ex.Message});
             }
         }
     }    

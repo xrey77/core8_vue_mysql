@@ -44,7 +44,7 @@ namespace core8_vue_mysql.Controllers.Products
                 _productService.ProductDelete(id);
                 return Ok(new {message = "Product has been deleted."});
             } catch(AppException ex) {
-               return BadRequest(new {Message = ex.Message});
+               return BadRequest(new {message = ex.Message});
             }
         }
     }    
