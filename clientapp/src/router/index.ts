@@ -1,53 +1,40 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import Home from '../views/Home.vue'
-import Location from '@/views/Location.vue'
-import About from '@/views/About.vue'
-import Profile from '@/components/users/profile.vue'
-import List from '@/components/Products/List.vue'
-import Catalogs from '@/components/Products/Catalogs.vue'
-import Search from '@/components/Products/Search.vue'
+import { createRouter, createWebHistory } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
 
-const routes: Array<RouteRecordRaw> = [
-  {
+const routes: RouteRecordRaw[] = [  
+{
     path: '/',
-    name: 'home',
-    component: Home
+    component: () => import('@/views/Home.vue')
   },
   {
     path: '/location',
-    name: 'location',
-    component: Location
+    component: () => import('@/views/Location.vue')
   },
   {
     path: '/about',
-    name: 'about',
-    component: About
+    component: () => import ('@/views/About.vue')
   },
   {
     path: '/profile',
-    name: 'profile',
-    component: Profile
+    component: () => import('@/views/Profile.vue')
   },
   {
     path: '/productlist',
-    name: 'productlist',
-    component: List
+    component: () => import('@/views/ProductList.vue')
   },
   {
     path: '/productcatalogs',
-    name: 'productcatalogs',
-    component: Catalogs
+    component: () => import('@/views/ProductCatalog.vue')
   },
   {
     path: '/productsearch',
-    name: 'productsearch',
-    component: Search
+    component: () => import('@/views/ProductSearch.vue')
   },
 
 ]
-
+//webpack
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(process.env.BASE_URL), 
   routes
 })
 

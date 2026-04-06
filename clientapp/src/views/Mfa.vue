@@ -33,8 +33,11 @@
 <script lang="ts">
  import { defineComponent } from 'vue';
  import $ from 'jquery';
- import axios from 'axios';
+ import axios, { AxiosError } from 'axios';
 
+ interface ApiError {
+    message: string;
+  } 
  
  const api = axios.create({
     baseURL: "https://localhost:7241",
@@ -64,21 +67,25 @@
             .then((res) => {
                   this.OtpMessage = res.data.message;
                   sessionStorage.setItem("USERNAME", res.data.username);
-                  $("#mfaReset").click();
+                  $("#mfaReset").trigger('click');
                   window.setTimeout(() => {
                     this.OtpMessage = '';
                     window.location.reload();
                   }, 3000);
-              }, (error: any) => {
+              }, (error: AxiosError<ApiError>) => {       
+                  if (error.response) {
                     this.OtpMessage = error.response.data.message;
-                    window.setTimeout(() => {
-                    this.OtpMessage = '';
-                    }, 3000);
+                  } else {
+                    this.OtpMessage = error.message;
+                  }
+                  window.setTimeout(() => {
+                  this.OtpMessage = '';
+                  }, 3000);
             });
 
         },
         closeMfa: function() {
-            $("#mfaReset").click();
+            $("#mfaReset").trigger('click');
             this.OtpMessage = '';
             sessionStorage.removeItem('USERID');
             sessionStorage.removeItem('USERNAME');

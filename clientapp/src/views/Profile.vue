@@ -152,7 +152,11 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import $ from 'jquery';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+
+interface ApiError {
+   message: string;
+ } 
 
 const selectedFile = ref<File | null>(null);
 
@@ -214,7 +218,7 @@ export default defineComponent({
                         this.profileMsg = '';
                     }, 3000);
                 }
-              }, (error: any) => {
+                }, (error: AxiosError<ApiError>) => {       
                     if (error.response) {
                         this.profileMsg = error.response.data.message;
                     } else {
@@ -250,7 +254,7 @@ export default defineComponent({
                     }, 3000);
                     return;
                 }
-              }, (error: any) => {
+                }, (error: AxiosError<ApiError>) => {       
                     if (error.response) {
                         this.profileMsg = error.response.data.message;
                     } else {
@@ -294,7 +298,7 @@ export default defineComponent({
                     window.setTimeout(() => {
                         this.profileMsg = '';
                     }, 3000);
-              }, (error: any) => {
+                }, (error: AxiosError<ApiError>) => {       
                     if (error.response) {
                         this.profileMsg = error.response.data.message;
                     } else {
@@ -332,7 +336,7 @@ export default defineComponent({
                         this.profileMsg = '';
                         window.location.reload();
                     }, 3000);
-                }, (error: any) => {
+                }, (error: AxiosError<ApiError>) => {       
                     if (error.response) {
                         this.profileMsg = error.response.data.message;
                     } else {
@@ -354,7 +358,6 @@ export default defineComponent({
                 $("#mfa2").hide();  
                 this.chkMfa = false;
                 this.showSave = true;
-                // $('#chkMfa').prop('checked', false);
             } else {
                 this.password = '';
                 this.confpassword = '';
@@ -369,7 +372,6 @@ export default defineComponent({
                 $("#mfa2").show();
                 this.chgPwd = false;
                 this.showSave = true;
-                // $('#chkPwd').prop('checked', false);
             } else {
                 $("#mfa1").hide();  
                 $("#mfa2").hide();                  
@@ -389,7 +391,7 @@ export default defineComponent({
                         this.profileMsg = '';
                     }, 3000);
                     return;
-              }, (error: any) => {
+                }, (error: AxiosError<ApiError>) => {       
                     if (error.response) {
                         this.profileMsg = error.response.data.message;
                     } else {
@@ -413,7 +415,7 @@ export default defineComponent({
                         this.profileMsg = '';
                     }, 3000);
                     return;
-              }, (error: any) => {
+                }, (error: AxiosError<ApiError>) => {       
                     if (error.response) {
                         this.profileMsg = error.response.data.message;
                     } else {
@@ -424,10 +426,7 @@ export default defineComponent({
                     }, 3000);
                     return;
             });
-
         },
-
     }
-
 })
 </script>

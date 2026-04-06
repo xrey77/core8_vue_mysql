@@ -68,7 +68,11 @@
 <script lang="ts">
     import { defineComponent } from 'vue';
     import $ from 'jquery';
-    import axios from 'axios';
+    import axios, { AxiosError } from 'axios';
+
+    interface ApiError {
+      message: string;
+    } 
 
     const api = axios.create({
       baseURL: "https://localhost:7241",
@@ -98,7 +102,7 @@
             this.username = '',
             this.password = '',
             this.registerMsg = '';
-            $("#registerReset").click();
+            $("#registerReset").trigger('click');
           },
           submitRegistration: function() {
             const data =JSON.stringify({ 
@@ -111,7 +115,7 @@
                   window.setTimeout(() => {
                     this.registerMsg = '';
                   }, 3000);
-              }, (error: any) => {
+              }, (error: AxiosError<ApiError>) => {                
                     if (error.response) {
                       this.registerMsg = error.response.data.message;
                     } else {
@@ -123,7 +127,7 @@
                   return;
             });
 
-            $("#registerReset").click();
+            $("#registerReset").trigger('click');
 
           }
         }

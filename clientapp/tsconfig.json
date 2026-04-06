@@ -5,16 +5,17 @@
     "strict": true,
     "jsx": "preserve",
     "moduleResolution": "node",
-    "skipLibCheck": true,
+    "skipLibCheck": true, 
+    "types": [
+      "webpack-env",
+      "node" 
+    ],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": [
-      "webpack-env"
-    ],
     "paths": {
       "@/*": [
         "src/*"

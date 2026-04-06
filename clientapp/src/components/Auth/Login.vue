@@ -54,16 +54,20 @@
 </style>
 
 <script lang="ts">
-    import { defineComponent } from 'vue';
-    import Mfa from '../../views/Mfa.vue';
-    import $ from 'jquery';
-    import axios from 'axios';
+  import { defineComponent } from 'vue';
+  import Mfa from '../../views/Mfa.vue';
+  import $ from 'jquery';
+  import axios, { AxiosError } from 'axios';
 
-    const api = axios.create({
-        baseURL: "https://localhost:7241",
-        headers: {'Accept': 'application/json',
-                  'Content-Type': 'application/json'}
-    })
+  const api = axios.create({
+      baseURL: "https://localhost:7241",
+      headers: {'Accept': 'application/json',
+                'Content-Type': 'application/json'}
+  })
+
+  interface ApiError {
+    message: string;
+  } 
 
   export default defineComponent({
     name: 'Login-Page',
@@ -82,7 +86,7 @@
             this.Username = '';
             this.Password = '';
             this.LoginMessage = '';
-            $("#loginReset").click();
+            $("#loginReset").trigger('click');
         },
         submitLogin: function() {    
             $('input').prop('disabled', true);
@@ -99,8 +103,8 @@
                         this.Username = '';
                         this.Password = '';
                         this.LoginMessage = '';
-                        $("#loginReset").click();
-                        $("#mfaModal").click();
+                        $("#loginReset").trigger('click');
+                        $("#mfaModal").trigger('click');
 
                     } else {
                         sessionStorage.setItem('USERID',res.data.id);
@@ -111,12 +115,12 @@
                           this.Username = '';
                           this.Password = '';
                           this.LoginMessage = '';
-                        $("#loginReset").click();
+                        $("#loginReset").trigger('click');
                         window.setTimeout(function() {
                           window.location.reload();
                         }, 200);
                     }
-              }, (error: any) => {
+              }, (error: AxiosError<ApiError>) => {                
                     $('input').prop('disabled', false);
                     if (error.response) {
                       this.LoginMessage = error.response.data.message;
