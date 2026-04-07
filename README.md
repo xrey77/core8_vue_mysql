@@ -23,7 +23,7 @@ Features :
 4. Product Listings and Pagination
 5. User Account Activation via Email
 6. Swagger RESTful API Documentation, https://localhost:7241/swagger/index.html
-7. E23 xUnit Testing
+7. E2E Async xUnit Testing
 
 If you want to test, do the following:
 1. Setup MySql Server 8.0.25
