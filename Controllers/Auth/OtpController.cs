@@ -39,9 +39,9 @@ namespace core8_vue_mysql.Controllers.Auth
     }  
 
         [HttpPost("/api/validateotp")]
-        public IActionResult validateOTP(OtpModel model) {
+        public async Task<IActionResult> validateOTP(OtpModel model) {
             try {
-                var user = _userService.GetById(model.Id);
+                var user = await _userService.GetById(model.Id);
                 if (user != null) {
                     var secret = user.Secretkey;
                     var otp = model.Otp;

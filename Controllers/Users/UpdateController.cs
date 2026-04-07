@@ -43,7 +43,7 @@ namespace core8_vue_mysql.Controllers.Users
 
 
         [HttpPatch("/api/updateprofile/{id}")]        
-        public IActionResult updateUser(int id, [FromBody]UserUpdate model) {
+        public async Task<IActionResult> updateUser(int id, [FromBody]UserUpdate model) {
             var user = _mapper.Map<User>(model);
             user.Id = id;
             user.FirstName = model.Firstname;
@@ -51,7 +51,7 @@ namespace core8_vue_mysql.Controllers.Users
             user.Mobile = model.Mobile;
             try
             {
-                _userService.UpdateProfile(user);
+                await _userService.UpdateProfile(user);
                 return Ok(new {message="Your profile has been updated successfully.",user = model});
             }
             catch (AppException ex)

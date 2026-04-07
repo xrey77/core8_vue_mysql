@@ -5,21 +5,25 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using core8_vue_mysql.Entities;
 using core8_vue_mysql.Helpers;
+using core8_vue_mysql.Models.dto;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace core8_vue_mysql.Services
 {
     public interface IUserService {
-        IEnumerable<User> GetAll();
-        User GetById(int id);
-        void UpdateProfile(User user);
+        Task<IEnumerable<User>> GetAll();
+        Task<User> GetById(int id);
+        Task UpdateProfile(User user);
         void Delete(int id);
-        void ActivateMfa(int id, bool opt, string qrcode_url);
+        Task ActivateMfa(int id, bool opt, string qrcode_url);
         void UpdatePicture(int id, string file);
-        void UpdatePassword(User user, string password = null);
+        Task UpdatePassword(User user, string password = null);
         int EmailToken(int etoken);
         int SendEmailToken(string email);
         void ActivateUser(int id);
-        void ChangePassword(User userParam);
+        Task ForgotPassword(User userParam);
+        Task<bool> GetMailToken(int mailtoken);
     }
 
     public class UserService : IUserService
@@ -53,24 +57,28 @@ namespace core8_vue_mysql.Services
             }   
         }
 
-        public IEnumerable<User> GetAll()
+        public async Task<IEnumerable<User>> GetAll()
         {
-            var users = _context.Users.ToList();
+            var users = await _context.Users.ToListAsync();
             return users;
         }
 
-        public User GetById(int id)
+        public async Task<User> GetById(int id)
         {
-                var user = _context.Users.Find(id);
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == id);
                 if (user == null) {
                     throw new AppException("User does'not exists....");
                 }
                 return user;
         }
 
-        public void UpdateProfile(User userParam)
+
+        public async Task UpdateProfile(User userParam)
         {
-            var user = _context.Users.Find(userParam.Id);
+            // Use FindAsync to retrieve the user asynchronously
+            var user = await _context.Users.FindAsync(userParam.Id);
+            
             if (user is null) {
                 throw new AppException("User not found");
             }
@@ -87,16 +95,17 @@ namespace core8_vue_mysql.Services
                 user.Mobile = userParam.Mobile;
             }
 
-            DateTime now = DateTime.Now;
-            user.UpdatedAt = now;
+            user.UpdatedAt = DateTime.Now;
+
             _context.Users.Update(user);
-            _context.SaveChanges();            
+
+            await _context.SaveChangesAsync();            
         }
 
-        public void UpdatePassword(User userParam, string password = null)
+        public async Task UpdatePassword(User userParam, string password = null)
         {
-            var user = _context.Users.Find(userParam.Id);
-            if (user == null)
+            var user = await _context.Users.FindAsync(userParam.Id);
+            if (user is null)
                 throw new AppException("User not found");
 
             if (!string.IsNullOrWhiteSpace(userParam.Password))
@@ -104,16 +113,15 @@ namespace core8_vue_mysql.Services
                  user.Password = BCrypt.Net.BCrypt.HashPassword(userParam.Password);
 
             }
-            DateTime now = DateTime.Now;
-            user.UpdatedAt = now;
+            user.UpdatedAt = DateTime.Now;            
             _context.Users.Update(user);
-            _context.SaveChanges();            
+            await _context.SaveChangesAsync();        
         }
 
 
-        public void ActivateMfa(int id, bool opt, string qrcode_url)
+        public async Task ActivateMfa(int id, bool opt, string qrcode_url)
         {
-           var user = _context.Users.Find(id);
+            var user = await _context.Users.FindAsync(id);
             if (user != null)
             {
                 if (opt == true ) {
@@ -123,7 +131,7 @@ namespace core8_vue_mysql.Services
                     user.Qrcodeurl = null;
                 }
                 _context.Users.Update(user);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             else {
                throw new AppException("User not found");
@@ -182,28 +190,25 @@ namespace core8_vue_mysql.Services
             return _rdm.Next(_min, _max);
         }
 
-        public void ChangePassword(User userParam)
+        public async Task ForgotPassword(User userParam)
         {
-           var xuser =  _context.Users.AsQueryable().FirstOrDefault(c => c.Email == userParam.Email);
-           var etoken = EmailToken(xuser.Mailtoken);
-
-
-            if (xuser == null) {
-                throw new AppException("Email Address not found...");
+            if (userParam.Password is null){
+                throw new AppException("Please enter your new password.");
+            }
+            var user = await _context.Users.FirstOrDefaultAsync(c => c.Mailtoken == userParam.Mailtoken);
+            if (user is not null) {
+                user.Password = BCrypt.Net.BCrypt.HashPassword(userParam.Password);            
+                user.Mailtoken = 0;
+                await _context.SaveChangesAsync();
+            } else {
+                throw new AppException("Mailtoken not found...");
             }           
-            if (xuser.UserName != userParam.UserName)
-            {
-                throw new AppException("Username not found...");
-            }
-            if (xuser.Password == null)
-            {
-                throw new AppException("Please enter Password...");
-            }
-            xuser.Password = BCrypt.Net.BCrypt.HashPassword(userParam.Password);
-            _context.Users.Update(xuser);
-            _context.SaveChanges();
         }
 
+        public async Task<bool> GetMailToken(int mailtoken)
+        {
+            return await _context.Users.AnyAsync(c => c.Mailtoken == mailtoken);            
+        }
 
 
     }

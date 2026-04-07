@@ -68,7 +68,7 @@ namespace core8_vue_mysql.Services
 
             userdata.Secretkey = secretkey.ToUpper();             
             userdata.Password = BCrypt.Net.BCrypt.HashPassword(passwd);
-            userdata.Profilepic = "https://localhost:5100/users/pix.png";
+            userdata.Profilepic = "pix.png";
             userdata.RolesId = 2;
             _context.Users.Add(userdata);                
             _context.SaveChanges();

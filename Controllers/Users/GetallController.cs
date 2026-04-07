@@ -40,9 +40,9 @@ namespace core8_vue_mysql.Controllers.Users
         }  
 
         [HttpGet]
-        public IActionResult getAllusers() {
+        public async Task<IActionResult> getAllusers() {
             try {                
-                var user = _userService.GetAll();
+                var user = await _userService.GetAll();
                 var model = _mapper.Map<IList<UserModel>>(user);
                 return Ok(model); 
             } catch(AppException ex) {

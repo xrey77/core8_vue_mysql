@@ -37,11 +37,11 @@ namespace core8_vue_mysql.Controllers.Users
     }  
 
         [HttpGet("/api/activateuser/{id}")]
-        public IActionResult ActivateUser(int id) {
+        public async Task<IActionResult> ActivateUser(int id) {
             try
             {
                     //GET USER INFO
-                    var user = _userService.GetById(id);
+                    var user = await _userService.GetById(id);
                     string email = user.Email;
                     string fullname = user.FirstName + " " + user.LastName;
                     string subj = "Account Activation Confirmation";

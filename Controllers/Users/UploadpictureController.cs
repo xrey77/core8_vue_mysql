@@ -50,23 +50,22 @@ namespace core8_vue_mysql.Controllers.Users
                     try
                     {
                         string ext= Path.GetExtension(model.Profilepic.FileName);
-
+                        
                         var folderName = Path.Combine("wwwroot", "users/");
                         var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
 
-                        var newFilename =pathToSave + "00" + model.Id + ".jpg";
+                        var newFilename =pathToSave + "00" + model.Id + ext;
 
                         using var image = SixLabors.ImageSharp.Image.Load(model.Profilepic.OpenReadStream());
                         image.Mutate(x => x.Resize(100, 100));
                         image.Save(newFilename);
-                        string file = "https://localhost:7241/users/00"+model.Id.ToString()+".jpg";
                         if (model.Profilepic != null)
                         {
-                            _userService.UpdatePicture(model.Id, file);                            
+                            _userService.UpdatePicture(model.Id, newFilename);
                         }
                         return Ok(new { 
                             message = "Your Profile Picture has been changed successfully.",
-                            profilepic = file});                        
+                            profilepic = newFilename});
                     }
                     catch (Exception ex)
                     {

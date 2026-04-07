@@ -42,12 +42,12 @@ namespace core8_vue_mysql.Controllers.Users
     }  
 
         [HttpPatch("/api/updatepassword/{id}")]        
-        public IActionResult updateUserPassword(int id, [FromBody]UserPasswordUpdate model) {
+        public async Task<IActionResult> updateUserPassword(int id, [FromBody]UserPasswordUpdate model) {
             var user = _mapper.Map<User>(model);
             user.Id = id;
             try
             {
-                _userService.UpdatePassword(user, model.Password);
+                await _userService.UpdatePassword(user, model.Password);
                 return Ok(new {message="Your profile password has been updated.",user = model});
             }
             catch (AppException ex)
@@ -55,7 +55,5 @@ namespace core8_vue_mysql.Controllers.Users
                 return BadRequest(new { message = ex.Message });
             }
         }
-
-
     }
 }

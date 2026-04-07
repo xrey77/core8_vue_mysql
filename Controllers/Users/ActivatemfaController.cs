@@ -41,17 +41,17 @@ namespace core8_vue_mysql.Controllers.Users
         _env = env;        
     }  
 
-        [HttpPut("/api/enablemfa/{id}")]
-        public IActionResult EnableMFA(int id,MfaModel model) {
+        [HttpPatch("/api/activatemfa/{id}")]
+        public async Task<IActionResult> EnableMFA(int id,MfaModel model) {
             if (model.Twofactorenabled == true) {
-                var user = _userService.GetById(id);
+                var user = await _userService.GetById(id);
                 if(user != null) {
                     QRCode qrimageurl = new QRCode();
                     var fullname = user.FirstName + " " + user.LastName;
                     TwoFactorAuthenticator twoFactor = new TwoFactorAuthenticator();
                     var setupInfo = twoFactor.GenerateSetupCode(fullname, user.Email, user.Secretkey, false, 3);
                     var imageUrl = setupInfo.QrCodeSetupImageUrl;
-                    _userService.ActivateMfa(id, true, imageUrl);
+                    await _userService.ActivateMfa(id, true, imageUrl);
                     return Ok(new {
                         message="Multi-Factor Authenticator has been enabled.",
                         qrcode=imageUrl});
@@ -60,7 +60,7 @@ namespace core8_vue_mysql.Controllers.Users
                 }
 
             } else {
-                _userService.ActivateMfa(id, false, null);
+                await _userService.ActivateMfa(id, false, null);
                 return Ok(new {message="Multi-Factor Authenticator has been disabled."});
             }
         }

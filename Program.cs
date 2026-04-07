@@ -15,8 +15,15 @@ using Microsoft.Extensions.Hosting;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using core8_vue_mysql.Helpers;
 using core8_vue_mysql.Services;
+using Microsoft.Extensions.Caching.Memory;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// 1. Register compression services
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true; // Required if using HTTPS
+});
 
 builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -127,7 +134,7 @@ app.UseStatusCodePages(async context =>
             context.HttpContext.Response.Redirect($"/error?code={context.HttpContext.Response.StatusCode}");
         }
     });
-
+app.UseResponseCompression();
 app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
@@ -135,3 +142,4 @@ app.MapControllerRoute(
 
 app.Run();
 
+public partial class Program { }

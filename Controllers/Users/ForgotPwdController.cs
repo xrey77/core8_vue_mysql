@@ -21,7 +21,7 @@ namespace core8_vue_mysql.Controllers.Users
 
     private IMapper _mapper;
     private IUserService _userService;
-    private EmailService _emailService;    
+    // private EmailService _emailService;    
     private readonly IConfiguration _configuration;  
     private readonly IWebHostEnvironment _env;
     private readonly ILogger<ForgotPwdController> _logger;
@@ -31,7 +31,7 @@ namespace core8_vue_mysql.Controllers.Users
         IWebHostEnvironment env,
         IMapper mapper,
         IUserService userService,
-        EmailService emailService,
+        // EmailService emailService,
         ILogger<ForgotPwdController> logger
         )
     {
@@ -39,25 +39,25 @@ namespace core8_vue_mysql.Controllers.Users
         _logger = logger;
         _mapper = mapper;
         _userService = userService;
-        _emailService = emailService;
+        // _emailService = emailService;
         _env = env;        
     }  
 
         //Forgot Password
-        [HttpPut("/api/resetpassword/{email}")]
-        public IActionResult ResetPassword(string email, [FromBody]ForgotPassword model)
+        [HttpPatch("/api/resetpassword/{email}")]
+        public async Task<IActionResult> ResetPassword(string email, [FromBody]ForgotPassword model)
         {
-           model.Email = email;
-           var user = _mapper.Map<User>(model);
-            try
-            {
-                _userService.ChangePassword(user);
-                return Ok(new {statuscode = 200, message = "Password successfully changed.." });
-            }
-            catch (AppException ex)
-            {
-                return BadRequest(new { statuscode = 400, message = ex.Message });
-            }
+                try {
+                    var user = new User();
+                    user.Mailtoken = model.Mailtoken;
+                    user.Password = model.Password;
+                    await _userService.ForgotPassword(user);
+                    return Ok(new {message = "Password successfully changed.." });
+                }
+                catch (AppException ex)
+                {
+                    return BadRequest(new {message = ex.Message });
+                }
         }
 
         [HttpPost("/api/emailtoken")]
@@ -65,7 +65,7 @@ namespace core8_vue_mysql.Controllers.Users
         {
            try {
              int etoken = _userService.SendEmailToken(model.Email);             
-             _emailService.sendMailToken(model.Email,"Mail Token","Please copy or enter this token in forgot password option. " + etoken.ToString());
+            //  _emailService.sendMailToken(model.Email,"Mail Token","Please copy or enter this token in forgot password option. " + etoken.ToString());
             return Ok(new { etoken = etoken});
            }
             catch (AppException ex)
