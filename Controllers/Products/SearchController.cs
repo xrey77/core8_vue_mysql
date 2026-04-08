@@ -41,10 +41,10 @@ namespace core8_vue_mysql.Controllers.Products
         }  
 
         [HttpGet("/api/searchproducts/{page}/{key}")]
-        public IActionResult SearchProducts(int page, string key) {
+        public async Task<IActionResult> SearchProducts(int page, string key) {
             try {                
-                int totalpage = _productService.TotPageSearch(page, key);
-                var products = _productService.SearchAll(page, key);
+                int totalpage = await _productService.TotPageSearchAsync(page, key);
+                var products = await _productService.SearchAllAsync(page, key);
                 if (products != null) {
                     var model = _mapper.Map<IList<ProductModel>>(products);
                     return Ok(new {totpage = totalpage, page = page, products=model});

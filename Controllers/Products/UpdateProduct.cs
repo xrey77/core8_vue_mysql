@@ -39,10 +39,10 @@ namespace core8_vue_mysql.Controllers.Products
         }  
 
         [HttpPatch("/api/updateproduct/{id}")]
-        public IActionResult UpdateProducts(int id, ProductModel model) {
+        public async Task<IActionResult> UpdateProducts(int id, ProductModel model) {
             try {                
                 DateTime now = DateTime.Now;
-                var findId = _productService.GetProductById(id);
+                var findId = await _productService.GetProductByIdAsync(id);
                 var prods = _mapper.Map<Product>(findId);
                 prods.Category = model.Category;
                 prods.Descriptions = model.Descriptions;
@@ -54,7 +54,7 @@ namespace core8_vue_mysql.Controllers.Products
                 prods.AlertStocks = model.AlertStocks;
                 prods.CriticalStocks = model.CriticalStocks;
                 prods.UpdatedAt = now;
-                _productService.ProductUpdate(prods);
+                await _productService.ProductUpdateAsync(prods);
                 return Ok(new {message = "Product has been updated."});
             } catch(AppException ex) {
                return BadRequest(new { message = ex.Message});

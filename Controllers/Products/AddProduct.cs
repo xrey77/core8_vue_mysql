@@ -39,7 +39,7 @@ namespace core8_vue_mysql.Controllers.Products
         }  
 
         [HttpPost("/api/addproduct")]
-        public IActionResult AddProducts(ProductModel model) {
+        public async Task<IActionResult> AddProducts(ProductModel model) {
             try {                
                 DateTime now = DateTime.Now;
                 var prods = _mapper.Map<Product>(model);
@@ -53,7 +53,7 @@ namespace core8_vue_mysql.Controllers.Products
                 prods.AlertStocks = model.AlertStocks;
                 prods.CriticalStocks = model.CriticalStocks;
                 prods.CreatedAt = now;
-                _productService.CreateProduct(prods);                
+                await _productService.CreateProductAsync(prods);                
                 return Ok(new { message = "New product has been added to the database."});
             } catch(AppException ex) {
                return BadRequest(new {message = ex.Message});

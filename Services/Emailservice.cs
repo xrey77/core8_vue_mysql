@@ -1,79 +1,70 @@
-using MailKit.Net.Smtp;
+using MailKit.Net.Smtp; // Ensure this is the only SmtpClient used
 using MailKit.Security;
 using MimeKit;
-using Microsoft.Extensions.Configuration; // For configuration
+using Microsoft.Extensions.Configuration;
 
 namespace core8_vue_mysql.Services
 {
-
-    public interface IEmailService {
-        void sendMail(string to,string fullname, string subject, string msgBody);
-        void sendMailToken(string to, string subject, string msgBody);
-    }
-
-
-public class EmailService : IEmailService
-{
-    private readonly IConfiguration _configuration;
-
-    public EmailService(IConfiguration configuration)
+    public interface IEmailService
     {
-        _configuration = configuration;
+        Task sendMail(string to, string fullname, string subject, string msgBody);
+        Task sendMailToken(string to, string subject, string msgBody);
     }
 
-        public void sendMail(string to,string fullname, string subject, string msgBody) {
-                    MimeMessage message = new MimeMessage();
-                    message.From.Add(MailboxAddress.Parse(_configuration["rey107@gmail.com"]));
-                    message.To.Add(MailboxAddress.Parse(to));                    
-                    message.Subject = subject;
+    public class EmailService : IEmailService
+    {
+        private readonly IConfiguration _configuration;
 
-                    message.Body = new TextPart(MimeKit.Text.TextFormat.Html) 
-                    { 
-                        Text = msgBody
-                    };
-
-                    // BodyBuilder bodyBuilder = new BodyBuilder();
-                    // bodyBuilder.HtmlBody = msgBody;
-                    
-                    using var smtp = new SmtpClient();
-                    try
-                    {
-                         smtp.ConnectAsync("EmailSettings.smtpserver", 587, SecureSocketOptions.StartTls);
-                         smtp.AuthenticateAsync(_configuration["EmailSettings:fromEmail"], _configuration["EmailSettings:emailPassword"]);
-                         smtp.SendAsync(message);
-                    }
-                    finally
-                    {
-                         smtp.DisconnectAsync(true);
-                    }
+        public EmailService(IConfiguration configuration)
+        {
+            _configuration = configuration;
         }
 
-        public void sendMailToken(string to, string subject, string msgBody) {
-                    MimeMessage message = new MimeMessage();
-                    message.From.Add(MailboxAddress.Parse(_configuration["EmailSettings:fromEmail"]));
-                    message.To.Add(MailboxAddress.Parse(to));                    
-                    message.Subject = subject;
+        // 1. Added 'async' keyword and changed return type to Task
+        public async Task sendMail(string to, string fullname, string subject, string msgBody)
+        {
+            var message = new MimeMessage();
+            // 2. Map the "From" address correctly from configuration keys, not a literal email string
+            message.From.Add(MailboxAddress.Parse(_configuration["EmailSettings:fromEmail"]));
+            message.To.Add(MailboxAddress.Parse(to));
+            message.Subject = subject;
 
-                    message.Body = new TextPart(MimeKit.Text.TextFormat.Html) 
-                    { 
-                        Text = msgBody
-                    };
+            message.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = msgBody };
 
-                    // BodyBuilder bodyBuilder = new BodyBuilder();
-                    // bodyBuilder.HtmlBody = msgBody;
-                    
-                    using var smtp = new SmtpClient();
-                    try
-                    {
-                         smtp.ConnectAsync("EmailSettings.smtpserver", 587, SecureSocketOptions.StartTls);
-                         smtp.AuthenticateAsync(_configuration["EmailSettings:fromEmail"], _configuration["EmailSettings:emailPassword"]);
-                         smtp.SendAsync(message);
-                    }
-                    finally
-                    {
-                         smtp.DisconnectAsync(true);
-                    }
-        }               
-}
+            using var smtp = new SmtpClient();
+            try
+            {
+                // 3. Use the configuration value, not the literal string name
+                await smtp.ConnectAsync(_configuration["EmailSettings:smtpserver"], 587, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(_configuration["EmailSettings:fromEmail"], _configuration["EmailSettings:emailPassword"]);
+                await smtp.SendAsync(message);
+            }
+            finally
+            {
+                await smtp.DisconnectAsync(true);
+            }
+        }
 
+        public async Task sendMailToken(string to, string subject, string msgBody)
+        {
+            var message = new MimeMessage();
+            message.From.Add(MailboxAddress.Parse(_configuration["EmailSettings:fromEmail"]));
+            message.To.Add(MailboxAddress.Parse(to));
+            message.Subject = subject;
+
+            message.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = msgBody };
+
+            using var smtp = new SmtpClient();
+            try
+            {
+                await smtp.ConnectAsync(_configuration["EmailSettings:smtpserver"], 587, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(_configuration["EmailSettings:fromEmail"], _configuration["EmailSettings:emailPassword"]);
+                await smtp.SendAsync(message);
+            }
+            finally
+            {
+                await smtp.DisconnectAsync(true);
+            }
+        }
+    }
 }

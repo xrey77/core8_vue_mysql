@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("core8_vue_mysql.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b990b382089241f310a1c9298c03fbca7013cfb0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+21107cb7dbca7163e97830caa6c5aceb97f4a568")]
 [assembly: System.Reflection.AssemblyProductAttribute("core8_vue_mysql.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("core8_vue_mysql.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

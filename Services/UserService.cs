@@ -15,13 +15,13 @@ namespace core8_vue_mysql.Services
         Task<IEnumerable<User>> GetAll();
         Task<User> GetById(int id);
         Task UpdateProfile(User user);
-        void Delete(int id);
+        Task Delete(int id);
         Task ActivateMfa(int id, bool opt, string qrcode_url);
-        void UpdatePicture(int id, string file);
+        Task UpdatePicture(int id, string file);
         Task UpdatePassword(User user, string password);
         int EmailToken(int etoken);
-        int SendEmailToken(string email);
-        void ActivateUser(int id);
+        Task<int> SendEmailToken(string email);
+        Task ActivateUser(int id, int isactivated);
         Task ForgotPassword(User userParam);
         Task<bool> GetMailToken(int mailtoken);
     }
@@ -44,13 +44,13 @@ namespace core8_vue_mysql.Services
             _appSettings = appSettings.Value;
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            var user = _context.Users.Find(id);
-            if (user != null)
+            var user = await _context.Users.FindAsync(id);
+            if (user is not null)
             {
                 _context.Users.Remove(user);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             else {
                throw new AppException("User not found");
@@ -76,9 +76,7 @@ namespace core8_vue_mysql.Services
 
         public async Task UpdateProfile(User userParam)
         {
-            // Use FindAsync to retrieve the user asynchronously
-            var user = await _context.Users.FindAsync(userParam.Id);
-            
+            var user = await _context.Users.FindAsync(userParam.Id);            
             if (user is null) {
                 throw new AppException("User not found");
             }
@@ -122,10 +120,9 @@ namespace core8_vue_mysql.Services
         public async Task ActivateMfa(int id, bool opt, string qrcode_url)
         {
             var user = await _context.Users.FindAsync(id);
-            if (user != null)
+            if (user is not null)
             {
-                if (opt == true ) {
-
+                if (opt) {
                     user.Qrcodeurl = qrcode_url;
                 } else {
                     user.Qrcodeurl = null;
@@ -137,48 +134,54 @@ namespace core8_vue_mysql.Services
                throw new AppException("User not found");
             }                    }
 
-        public void UpdatePicture(int id, string file)
+        public async Task UpdatePicture(int id, string file)
         {
-            var user = _context.Users.Find(id);
-            if (user != null)
+            var user = await _context.Users.FindAsync(id);
+            if (user is not null)
             {
                 user.Profilepic = file ?? string.Empty;
                 _context.Users.Update(user);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             else {
                throw new AppException("User not found");
             }                    
         }
 
-       public void ActivateUser(int id) 
-       {
-            var user = _context.Users.Find(id);
-            if (user.Isblocked == 1) {
-                throw new AppException("Account has been blocked.");
-            }
-            if ( user.Isactivated == 1) {
-                throw new AppException("Account is alread activated.");
-            }
-            user.Isactivated = 1;
-            if (user == null)
-            {
-                throw new AppException("User not found");
-            }
-            _context.Users.Update(user);
-            _context.SaveChanges();            
-       }
-
-        public int SendEmailToken(string email)
+        public async Task ActivateUser(int id, int activation) 
         {
-           var user =  _context.Users.AsQueryable().FirstOrDefault(c => c.Email == email);
-           if (user == null) {
+            var user = await _context.Users.FindAsync(id);
+            if (user is not null) {            
+                if (user.Isblocked == 1) {
+                    throw new AppException("Account has been blocked.");
+                }
+                
+                if (user.Isactivated == 1) {
+                    throw new AppException("Account is already activated.");
+                }
+
+                user.Isactivated = activation;
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+                
+            } else {
+                throw new AppException("User not found");
+            }            
+        }
+
+        public async Task<int> SendEmailToken(string email)
+        {
+        //    var user =  _context.Users.AsQueryable().FirstOrDefault(c => c.Email == email);
+
+            var user = await _context.Users.FirstOrDefaultAsync(c => c.Email == email);
+
+           if (user is null) {
                 throw new AppException("Email Address not found...");
            }
             var etoken = EmailToken(user.Mailtoken);
             user.Mailtoken = etoken;
             _context.Users.Update(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return etoken;
         }       
 
@@ -209,7 +212,5 @@ namespace core8_vue_mysql.Services
         {
             return await _context.Users.AnyAsync(c => c.Mailtoken == mailtoken);            
         }
-
-
     }
 }

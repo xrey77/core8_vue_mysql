@@ -44,7 +44,7 @@ namespace core8_vue_mysql.Controllers.Users
         _env = env;        
     }  
         [HttpPost]
-        public IActionResult uploadPicture([FromForm]UploadfileModel model) {
+        public async Task<IActionResult> uploadPicture([FromForm]UploadfileModel model) {
                 if (model.Profilepic.FileName != null)
                 {
                     try
@@ -61,7 +61,7 @@ namespace core8_vue_mysql.Controllers.Users
                         image.Save(newFilename);
                         if (model.Profilepic != null)
                         {
-                            _userService.UpdatePicture(model.Id, newFilename);
+                            await _userService.UpdatePicture(model.Id, newFilename);
                         }
                         return Ok(new { 
                             message = "Your Profile Picture has been changed successfully.",

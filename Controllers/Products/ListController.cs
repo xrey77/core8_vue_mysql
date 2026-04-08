@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ namespace core8_vue_mysql.Controllers.Products
 {
     [ApiExplorerSettings(GroupName = "List All Products")]    
     [ApiController]
+    [AllowAnonymous] 
     [Route("[controller]")]
     public class ListController : ControllerBase {
         private IProductService _productService;
@@ -36,10 +38,10 @@ namespace core8_vue_mysql.Controllers.Products
         }  
 
         [HttpGet("/api/listproducts/{page}")]
-        public IActionResult ListProducts(int page) {
+        public async Task<IActionResult> ListProducts(int page) {
             try {                
-                int totalpage = _productService.TotPage();
-                var products = _productService.ListAll(page);
+                int totalpage = await _productService.TotPageAsync();
+                var products = await _productService.ListAllAsync(page);
                 var model = _mapper.Map<IList<ProductModel>>(products);
                 return Ok(new {totpage = totalpage, page = page, products=model});
             } catch(AppException ex) {

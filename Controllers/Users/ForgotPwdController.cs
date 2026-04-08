@@ -21,7 +21,7 @@ namespace core8_vue_mysql.Controllers.Users
 
     private IMapper _mapper;
     private IUserService _userService;
-    // private EmailService _emailService;    
+    private EmailService _emailService;    
     private readonly IConfiguration _configuration;  
     private readonly IWebHostEnvironment _env;
     private readonly ILogger<ForgotPwdController> _logger;
@@ -31,7 +31,7 @@ namespace core8_vue_mysql.Controllers.Users
         IWebHostEnvironment env,
         IMapper mapper,
         IUserService userService,
-        // EmailService emailService,
+        EmailService emailService,
         ILogger<ForgotPwdController> logger
         )
     {
@@ -39,11 +39,10 @@ namespace core8_vue_mysql.Controllers.Users
         _logger = logger;
         _mapper = mapper;
         _userService = userService;
-        // _emailService = emailService;
+        _emailService = emailService;
         _env = env;        
     }  
 
-        //Forgot Password
         [HttpPatch("/api/resetpassword/{email}")]
         public async Task<IActionResult> ResetPassword(string email, [FromBody]ForgotPassword model)
         {
@@ -61,23 +60,17 @@ namespace core8_vue_mysql.Controllers.Users
         }
 
         [HttpPost("/api/emailtoken")]
-        public IActionResult EmailToken([FromBody]MailTokenModel model)
+        public async Task<IActionResult> EmailToken([FromBody]MailTokenModel model)
         {
            try {
-             int etoken = _userService.SendEmailToken(model.Email);             
-            //  _emailService.sendMailToken(model.Email,"Mail Token","Please copy or enter this token in forgot password option. " + etoken.ToString());
+             int etoken = await _userService.SendEmailToken(model.Email);             
+             await _emailService.sendMailToken(model.Email,"Mail Token","Please copy or enter this token in forgot password option. " + etoken.ToString());
             return Ok(new { etoken = etoken});
            }
             catch (AppException ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
-
         }
-
-
-    
-
-
     }    
 }

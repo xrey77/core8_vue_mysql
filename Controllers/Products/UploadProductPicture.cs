@@ -42,7 +42,7 @@ namespace core8_vue_mysql.Controllers.Products
         }  
 
         [HttpPatch("/api/uploadproductpicture/{id}")]
-        public IActionResult ProdupdatePicture(UploadProductpicModel model) {
+        public async Task<IActionResult> ProdupdatePicture(UploadProductpicModel model) {
                 if (model.ProductPicture.FileName != null)
                 {
                     try
@@ -58,7 +58,7 @@ namespace core8_vue_mysql.Controllers.Products
                         string file = "https://localhost:7241/products/00"+model.Id.ToString()+".jpg";
                         if (model.ProductPicture != null)
                         {
-                            _productService.UpdateProdPicture(model.Id, file);                            
+                            await _productService.UpdateProdPictureAsync(model.Id, file);                            
                         }
                         return Ok(new { 
                             message = "Product Picture has been updated.",

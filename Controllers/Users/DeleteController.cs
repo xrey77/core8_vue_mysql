@@ -40,10 +40,10 @@ namespace core8_vue_mysql.Controllers.Users
     }  
 
         [HttpDelete]
-        public IActionResult deleteUser(int id) {
+        public async Task<IActionResult> deleteUser(int id) {
             try
             {
-               _userService.Delete(id);
+               await _userService.Delete(id);
             return Ok(new { message = $"User ID # {id} has been deleted successfully." });               
            }
             catch (AppException ex)

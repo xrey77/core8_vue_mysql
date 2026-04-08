@@ -39,9 +39,9 @@ namespace core8_vue_mysql.Controllers.Products
         }  
 
         [HttpDelete("/api/deleteproduct/{id}")]
-        public IActionResult PurgeProduct(int id) {
+        public async Task<IActionResult> PurgeProduct(int id) {
             try {                
-                _productService.ProductDelete(id);
+                await _productService.ProductDeleteAsync(id);
                 return Ok(new {message = "Product has been deleted."});
             } catch(AppException ex) {
                return BadRequest(new {message = ex.Message});

@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="../buildMultiTargeting/core8_vue_mysql.props" />
-</Project>

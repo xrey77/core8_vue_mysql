@@ -1,62 +1,68 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
-using MailKit.Net.Smtp;
-using MailKit.Security;
-using MimeKit;
 using System.IO;
 using core8_vue_mysql.Services;
 using core8_vue_mysql.Helpers;
+using Microsoft.Extensions.Caching.Memory;
+using core8_vue_mysql.Models.dto;
 
 namespace core8_vue_mysql.Controllers.Users
 {
     [ApiExplorerSettings(GroupName = "Forgot User Password")]
     [ApiController]
+    [AllowAnonymous] 
     [Route("[controller]")]
     public class ActivateUserController : ControllerBase {
     private IUserService _userService;
-    private EmailService _emailService;    
     private readonly IConfiguration _configuration;  
     private readonly IWebHostEnvironment _env;
     private readonly ILogger<ActivateUserController> _logger;
+    private readonly IMemoryCache _cache;
 
     public ActivateUserController(
         IConfiguration configuration,
         IWebHostEnvironment env,
-        EmailService emailService,
         IUserService userService,
+        IMemoryCache cache,
         ILogger<ActivateUserController> logger
         )
     {
+        _cache = cache;
         _configuration = configuration;  
-        _emailService = emailService;
         _userService = userService;
         _logger = logger;
         _env = env;        
     }  
 
-        [HttpGet("/api/activateuser/{id}")]
-        public async Task<IActionResult> ActivateUser(int id) {
+        [HttpPatch("/api/activateuser/{id}")]
+        public async Task<IActionResult> ActivateUser(int id, [FromBody]ActivationRequest model) 
+        {
             try
             {
-                    //GET USER INFO
-                    var user = await _userService.GetById(id);
-                    string email = user.Email;
-                    string fullname = user.FirstName + " " + user.LastName;
-                    string subj = "Account Activation Confirmation";
-                    string htmlmsg = "<div><p><strong>Congratiolation</strong>, your Account has been activated successfully..</p></div>";
-                   _userService.ActivateUser(id);
-                    //SEND ACTIONVATION CONFIRMATION
-                  _emailService.sendMail(email, fullname, subj, htmlmsg);
-                return Ok(new {message = "Your Account is activated successfully."});
+                string cacheKey = $"user_{id}";
+                var user = await _cache.GetOrCreateAsync(cacheKey, entry => 
+                {
+                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+                    return _userService.GetById(id);
+                });
+
+                if (user is null) {
+                    return NotFound(new { message = "User not found" });
+                } 
+                await _userService.ActivateUser(id, model.Activation);
+
+                _cache.Remove(cacheKey);
+                return Ok(new { message = "Your Account is activated successfully."});
             }
-            catch (AppException ex)
+            catch (Exception ex)
             {
-                return BadRequest(new {message = ex.Message });
+                _logger.LogError(ex, "Activation failed");
+                return StatusCode(500, ex.Message);                 
+                // return BadRequest(new { message = ex.Message });
             }
         }
-
-
     }    
 }

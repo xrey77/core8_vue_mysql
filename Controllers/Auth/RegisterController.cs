@@ -19,9 +19,9 @@ namespace core8_vue_mysql.Controllers.Auth
 {
     
 [ApiExplorerSettings(GroupName = "Sign-up or Account Registration")]
-[AllowAnonymous]
 [ApiController]
 [Route("[controller]")]
+[AllowAnonymous]
 public class RegisterController : ControllerBase
 {
     /* private EmailService _emailService;    */
@@ -49,34 +49,27 @@ public class RegisterController : ControllerBase
     }  
 
     [HttpPost("/signup")]
-    public IActionResult signup(UserRegister model) {
+    public async Task<IActionResult> Signup(UserRegister model) {
         DateTime now = DateTime.Now;
         var user = _mapper.Map<User>(model);
-            try
-            {
-                user.LastName = model.Lastname;
-                user.FirstName = model.Firstname;
-                user.Email = model.Email;
-                user.Mobile = model.Mobile;
-                user.UserName = model.Username;
-                user.CreatedAt = now;
-                user.Isactivated = 1;                
-                _authService.SignupUser(user, model.Password);
-                string fullname = model.Firstname + " " + model.Lastname;
-                string emailaddress = model.Email;
-                // string htmlmsg = "<div><p>Please click Activate button below to confirm you email address and activate your account.</p>"+
-                //             "<a href=\"https://localhost:7280/api/activateuser/id=" + user.Id.ToString() + "\" style=\"background-color: green;color:white;text-decoration: none;border-radius: 20px; \">&nbsp;&nbsp; Activate Account &nbsp;&nbsp;</a></div>";
-                // string subject = "Barclays Account Activation";                
-                // IF YOU WISH TO USE USER EMAIL ACTIVATION, JUST UNCOMMENT _emailService.sendMail
-                // _emailService.sendMail(emailaddress, fullname, subject, htmlmsg);
-                // and comment  user.Isactivated = 1;    
-                // return Ok(new {statuscode = 200, message = "Please check your e-mail inbox and click button activation"});
-                return Ok(new { message = "You have registered successfully, please login now."});
-            }
-            catch (AppException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+        user.LastName = model.Lastname;
+        user.FirstName = model.Firstname;
+        user.Email = model.Email;
+        user.Mobile = model.Mobile;
+        user.UserName = model.Username;
+        user.CreatedAt = now;
+        user.Isactivated = 1;                
+        await _authService.SignupUser(user, model.Password);
+        // string fullname = model.Firstname + " " + model.Lastname;
+        // string emailaddress = model.Email;
+        // string htmlmsg = "<div><p>Please click Activate button below to confirm you email address and activate your account.</p>"+
+        //             "<a href=\"https://localhost:7280/api/activateuser/id=" + user.Id.ToString() + "\" style=\"background-color: green;color:white;text-decoration: none;border-radius: 20px; \">&nbsp;&nbsp; Activate Account &nbsp;&nbsp;</a></div>";
+        // string subject = "Barclays Account Activation";                
+        // IF YOU WISH TO USE USER EMAIL ACTIVATION, JUST UNCOMMENT _emailService.sendMail
+        // _emailService.sendMail(emailaddress, fullname, subject, htmlmsg);
+        // and comment  user.Isactivated = 1;    
+        // return Ok(new {statuscode = 200, message = "Please check your e-mail inbox and click button activation"});
+        return Ok(new { message = "You have registered successfully, please login now."});
     }
 
 

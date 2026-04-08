@@ -39,9 +39,9 @@ namespace core8_vue_mysql.Controllers.Products
         }  
 
         [HttpGet("/api/getproductid/{id}")]
-        public IActionResult GetProductId(int id) {
+        public async Task<IActionResult> GetProductId(int id) {
             try {                
-                var prod = _productService.GetProductById(id);
+                var prod = await _productService.GetProductByIdAsync(id);
                 var prods = _mapper.Map<ProductModel>(prod);
                 return Ok(new {message = "Product found.", product = prods});
             } catch(AppException ex) {

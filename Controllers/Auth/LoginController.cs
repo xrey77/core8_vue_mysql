@@ -52,9 +52,9 @@ public class LoginController : ControllerBase
     }  
 
     [HttpPost("/signin")]
-    public IActionResult signin(UserLogin model) {
+    public async Task<IActionResult> Signin(UserLogin model) {
             try {
-                 User xuser = _authService.SigninUser(model.Username, model.Password);
+                 User xuser = await _authService.SigninUser(model.Username, model.Password);
                  if (xuser != null) {
 
                     var tokenHandler = new JwtSecurityTokenHandler();
@@ -65,7 +65,6 @@ public class LoginController : ControllerBase
                         {
                             new Claim(ClaimTypes.NameIdentifier, xuser.Id.ToString()),
                             new Claim(ClaimTypes.Name, xuser.UserName)
-                            // Add other claims as needed
                         }),
                         Expires = DateTime.UtcNow.AddHours(8), // Set token expiration
                         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
@@ -75,7 +74,7 @@ public class LoginController : ControllerBase
                     var token = tokenHandler.CreateToken(tokenDescriptor);
                     var tokenString = tokenHandler.WriteToken(token);
 
-                    var role = _authService.getRolename(xuser.RolesId);
+                    var role = await _authService.getRolename(xuser.RolesId);
                     return Ok(new { 
                         message = "You have logged-in successfully..",
                         id = xuser.Id,
