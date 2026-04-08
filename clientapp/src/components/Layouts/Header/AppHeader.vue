@@ -31,7 +31,7 @@
                 <router-link class="nav-link active" to="/location"><font-awesome-icon icon="location-arrow"/>Location</router-link>                
               </li>
             </ul>
-            <div v-if="Username === ''">
+            <div v-if="username === ''">
               <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
                   <a class="nav-link active" href="/#" data-bs-toggle="modal" data-bs-target="#staticLogin"><font-awesome-icon icon="unlock"/>Login</a>                
@@ -41,10 +41,10 @@
                 </li>            
               </ul>
             </div>
-            <ul v-if="Username !== ''" class="navbar-nav mr-auto">
+            <ul v-if="username !== ''" class="navbar-nav mr-auto">
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      <img class="user" v-bind:src="Userpic" />&nbsp;{{ Username }}
+                      <img class="user" v-bind:src="userpic" />&nbsp;{{ username }}
                     </a>
                     <ul class="dropdown-menu">
                       <li>
@@ -76,7 +76,7 @@
 
         <ul class="nav flex-column">
           <li class="nav-item" data-bs-dismiss="offcanvas">
-            <router-link class="nav-link active" to="/aboutus">About Us</router-link>                
+            <router-link class="nav-link active" to="/about">About Us</router-link>                
           </li>
           <li class="nav-item"><hr/></li>
           <li class="nav-item dropdown">
@@ -99,12 +99,12 @@
               <li class="nav-item"><hr/></li>
 
               <li class="nav-item" data-bs-dismiss="offcanvas">
-                <router-link class="nav-link active" to="/locateus">Locate Us</router-link>                
+                <router-link class="nav-link active" to="/location">Locate Us</router-link>                
               </li>
               <li class="nav-item"><hr/></li>
 
             </ul>
-            <div v-if="Username === ''">
+            <div v-if="username === ''">
               <ul class="nav flex-column">
                 <li class="nav-item" data-bs-dismiss="offcanvas">
                   <a class="nav-link active" href="/#" data-bs-toggle="modal" data-bs-target="#staticLogin">Login</a>
@@ -116,10 +116,10 @@
                 </li>            
               </ul>
             </div>
-            <ul v-if="Username !== ''"  class="navbar-nav mr-auto">
+            <ul v-if="username !== ''"  class="navbar-nav mr-auto">
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      <img class="user"  v-bind:src="Userpic" />{{ Username }}
+                      <img class="user"  v-bind:src="userpic" />{{ username }}
                     </a>
                     <ul class="dropdown-menu">
                       <li data-bs-dismiss="offcanvas">
@@ -171,48 +171,39 @@
 
 </style>
 
-<script lang="ts">
-    import { defineComponent } from 'vue';
-    import Register from '../../Auth/Register.vue';
-    import Login from '../../Auth/Login.vue';
+<script setup lang="ts">
+import {ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import Register from '../../Auth/Register.vue';
+import Login from '../../Auth/Login.vue';
 
-    export default defineComponent({
-        name: 'Header-Page',
-        components: {
-            Register,
-            Login
-        },
-        data() {
-          return {
-            Username: '',
-            Userpic: ''
-          }
-        },
-        mounted() {
-            const usrname = sessionStorage.getItem('USERNAME')
-            if (usrname) {
-              this.Username = usrname
-            }
-            const usrpic = sessionStorage.getItem('USERPIC')
-            if (usrpic) {
-              this.Userpic = usrpic
-            } 
-        },
-        methods: {
-          logout: function() {
-            /* eslint-disable */            
-            window.setTimeout(function() {
-              window.sessionStorage.removeItem('USERNAME');
-              window.sessionStorage.removeItem('TOKEN');
-              window.sessionStorage.removeItem('USERPIC');
-              window.location.reload();
-              /* this.$router.go(0);*/
-            }, 200);
-            /* this.$router.push('/');*/
-          },
-        }
-    })
+/* eslint-disable */
+defineOptions({
+    name: 'AppHeader',
+    inheritAttrs: false
+});
 
+const router = useRouter();
 
-    
+const username = ref('');
+const userpic = ref('');
+
+onMounted(() => {
+    const usrname = sessionStorage.getItem('USERNAME');
+    if (usrname) username.value = usrname;
+
+    const usrpic = sessionStorage.getItem('USERPIC');
+    if (usrpic) userpic.value = usrpic;
+});
+
+const logout = async () => {
+    sessionStorage.removeItem('USERID');
+    sessionStorage.removeItem('USERNAME');
+    sessionStorage.removeItem('TOKEN');
+    sessionStorage.removeItem('USERPIC');
+    sessionStorage.clear();
+    await router.push('/');
+    window.location.reload();    
+};
+
 </script>

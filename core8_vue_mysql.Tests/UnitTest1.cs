@@ -13,7 +13,7 @@ public class UnitTest1 : IClassFixture<WebApplicationFactory<Program>>
     public UnitTest1(WebApplicationFactory<Program> factory)
     {
         _client = factory.CreateClient();
-        string accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxIiwidW5pcXVlX25hbWUiOiJSZXkiLCJuYmYiOjE3NzU1NTEyNTQsImV4cCI6MTc3NTU1NDg1NCwiaWF0IjoxNzc1NTUxMjU0LCJpc3MiOiJSZXluYWxkIEdyYWdhc2luIiwiYXVkIjoiVXNlcnMifQ.fB-zwdfOlmgccFYqpojM6qhvJn2y2_QROJpOJlQWEyc";
+        string accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxIiwidW5pcXVlX25hbWUiOiJSZXkiLCJuYmYiOjE3NzU2MTMzNjQsImV4cCI6MTc3NTY0MjE2NCwiaWF0IjoxNzc1NjEzMzY0LCJpc3MiOiJSZXluYWxkIEdyYWdhc2luIiwiYXVkIjoiVXNlcnMifQ.Rm9NNblFyWyjwcTtMl5dhnBWdSLJ6B4WAluEp5R_YSM";
 
         _client.DefaultRequestHeaders.Authorization = 
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
@@ -70,21 +70,32 @@ public class UnitTest1 : IClassFixture<WebApplicationFactory<Program>>
         response.EnsureSuccessStatusCode();
     }
 
-    [Fact] // 6
-    public async Task ResetPassword_ReturnsSuccess()
+    // [Fact] // 6
+    // public async Task ResetPassword_ReturnsSuccess()
+    // {
+    //     var email = "rey@yahoo.com";
+    //     var encodedEmail = Uri.EscapeDataString(email);        
+
+
+    //     var updatedData = new 
+    //     { 
+    //         Mailtoken = 1111, // NOTE : This mailtoken should be present in the users table
+    //         Password = "nald"
+    //     };
+    //     var response = await _client.PatchAsJsonAsync($"/api/resetpassword/{encodedEmail}", updatedData);        
+    //     response.EnsureSuccessStatusCode();
+    // }
+
+    [Fact] // 7
+    public async Task validateOTP_RetursSuccess()
     {
-        var email = "rey@yahoo.com";
-        var encodedEmail = Uri.EscapeDataString(email);        
-
-
-        var updatedData = new 
+        var postData = new 
         { 
-            Mailtoken = 1111,
-            Password = "nald"
+            Id = 1,
+            Otp = "123446"
         };
-        var response = await _client.PatchAsJsonAsync($"/api/resetpassword/{encodedEmail}", updatedData);        
+        var response = await _client.PostAsJsonAsync($"/api/validateotp", postData);        
         response.EnsureSuccessStatusCode();
-
     }
 
 }

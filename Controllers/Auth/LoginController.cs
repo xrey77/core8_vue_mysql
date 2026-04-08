@@ -67,7 +67,7 @@ public class LoginController : ControllerBase
                             new Claim(ClaimTypes.Name, xuser.UserName)
                             // Add other claims as needed
                         }),
-                        Expires = DateTime.UtcNow.AddHours(1), // Set token expiration
+                        Expires = DateTime.UtcNow.AddHours(8), // Set token expiration
                         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                         Issuer = _configuration["Jwt:Issuer"],
                         Audience = _configuration["Jwt:Audience"]

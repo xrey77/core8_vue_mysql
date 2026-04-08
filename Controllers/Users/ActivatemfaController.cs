@@ -1,3 +1,4 @@
+#nullable enable
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Google.Authenticator;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using core8_vue_mysql.Models;
 using core8_vue_mysql.Models.dto;
 using core8_vue_mysql.Services;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace core8_vue_mysql.Controllers.Users
 {
@@ -18,7 +20,7 @@ namespace core8_vue_mysql.Controllers.Users
     public class ActivatemfaController : ControllerBase {
 
     private IUserService _userService;
-
+    private readonly IMemoryCache _cache;
     private IMapper _mapper;
     private readonly IConfiguration _configuration;  
 
@@ -31,9 +33,11 @@ namespace core8_vue_mysql.Controllers.Users
         IWebHostEnvironment env,
         IUserService userService,
         IMapper mapper,
+        IMemoryCache cache,
         ILogger<ActivatemfaController> logger
         )
     {
+        _cache = cache;
         _configuration = configuration;  
         _userService = userService;
         _mapper = mapper;
@@ -42,27 +46,69 @@ namespace core8_vue_mysql.Controllers.Users
     }  
 
         [HttpPatch("/api/activatemfa/{id}")]
-        public async Task<IActionResult> EnableMFA(int id,MfaModel model) {
-            if (model.Twofactorenabled == true) {
+        public async Task<IActionResult> EnableMFA(int id, MfaModel model) 
+        {
+            if (model.Twofactorenabled == true) 
+            {
                 var user = await _userService.GetById(id);
-                if(user != null) {
-                    QRCode qrimageurl = new QRCode();
-                    var fullname = user.FirstName + " " + user.LastName;
-                    TwoFactorAuthenticator twoFactor = new TwoFactorAuthenticator();
+                if (user == null) return NotFound(new { message = "User not found." });
+
+                // 1. Define a unique cache key for this user
+                string cacheKey = $"mfa_setup_{id}";
+
+                // 2. Try to get existing setup info from cache to avoid regenerating
+                if (!_cache.TryGetValue(cacheKey, out string? imageUrl))
+                {
+                    var fullname = $"{user.FirstName} {user.LastName}";
+                    var twoFactor = new TwoFactorAuthenticator();
                     var setupInfo = twoFactor.GenerateSetupCode(fullname, user.Email, user.Secretkey, false, 3);
-                    var imageUrl = setupInfo.QrCodeSetupImageUrl;
-                    await _userService.ActivateMfa(id, true, imageUrl);
-                    return Ok(new {
-                        message="Multi-Factor Authenticator has been enabled.",
-                        qrcode=imageUrl});
-                } else {
-                    return NotFound(new {message="User not found."});
+                    imageUrl = setupInfo.QrCodeSetupImageUrl;
+
+                    // 3. Set cache options (e.g., expire in 5 minutes)
+                    var cacheOptions = new MemoryCacheEntryOptions()
+                        .SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+
+                    // 4. Save to cache
+                    _cache.Set(cacheKey, imageUrl, cacheOptions);
                 }
 
-            } else {
+                await _userService.ActivateMfa(id, true, imageUrl);
+                
+                return Ok(new {
+                    message = "Muliti-Factor has been enabled. (cached for 5 minutes)",
+                    qrcode = imageUrl
+                });
+            } 
+            else 
+            {
+                // Remove from cache if they disable MFA
+                _cache.Remove($"mfa_setup_{id}");
                 await _userService.ActivateMfa(id, false, null);
-                return Ok(new {message="Multi-Factor Authenticator has been disabled."});
+                return Ok(new { message = "Multi-Factor Authenticator has been disabled." });
             }
         }
+
+        // [HttpPatch("/api/activatemfa/{id}")]
+        // public async Task<IActionResult> EnableMFA(int id,MfaModel model) {
+        //     if (model.Twofactorenabled == true) {
+        //         var user = await _userService.GetById(id);
+        //         if(user != null) {
+        //             QRCode qrimageurl = new QRCode();
+        //             var fullname = user.FirstName + " " + user.LastName;
+        //             TwoFactorAuthenticator twoFactor = new TwoFactorAuthenticator();
+        //             var setupInfo = twoFactor.GenerateSetupCode(fullname, user.Email, user.Secretkey, false, 3);
+        //             var imageUrl = setupInfo.QrCodeSetupImageUrl;
+        //             await _userService.ActivateMfa(id, true, imageUrl);
+        //             return Ok(new {
+        //                 message="Multi-Factor Authenticator has been enabled.",
+        //                 qrcode=imageUrl});
+        //         } else {
+        //             return NotFound(new {message="User not found."});
+        //         }
+        //     } else {
+        //         await _userService.ActivateMfa(id, false, null);
+        //         return Ok(new {message="Multi-Factor Authenticator has been disabled."});
+        //     }
+        // }
     }    
 }

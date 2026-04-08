@@ -8,6 +8,7 @@ using core8_vue_mysql.Entities;
 using core8_vue_mysql.Helpers;
 using core8_vue_mysql.Models.dto;
 using core8_vue_mysql.Services;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace core8_vue_mysql.Controllers.Users
 {
@@ -21,7 +22,7 @@ namespace core8_vue_mysql.Controllers.Users
 
     private IMapper _mapper;
     private readonly IConfiguration _configuration;  
-
+    private readonly IMemoryCache _cache;
     private readonly IWebHostEnvironment _env;
 
     private readonly ILogger<UpdatePasswordController> _logger;
@@ -31,9 +32,11 @@ namespace core8_vue_mysql.Controllers.Users
         IWebHostEnvironment env,
         IUserService userService,
         IMapper mapper,
+        IMemoryCache cache,
         ILogger<UpdatePasswordController> logger
         )
     {
+        _cache = cache;
         _configuration = configuration;  
         _userService = userService;
         _mapper = mapper;
@@ -42,18 +45,50 @@ namespace core8_vue_mysql.Controllers.Users
     }  
 
         [HttpPatch("/api/updatepassword/{id}")]        
-        public async Task<IActionResult> updateUserPassword(int id, [FromBody]UserPasswordUpdate model) {
+        public async Task<IActionResult> updateUserPassword(int id, [FromBody]UserPasswordUpdate model) 
+        {
             var user = _mapper.Map<User>(model);
             user.Id = id;
+            
             try
             {
                 await _userService.UpdatePassword(user, model.Password);
-                return Ok(new {message="Your profile password has been updated.",user = model});
+
+                // 1. Define a unique cache key
+                string cacheKey = $"user_{id}";
+
+                // 2. Invalidate/Remove existing cache so the next 'Get' fetch is fresh
+                _cache.Remove(cacheKey);
+
+                // 3. (Optional) Re-cache the updated user object immediately
+                var cacheOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(30))
+                    .SetAbsoluteExpiration(TimeSpan.FromHours(1));
+
+                _cache.Set(cacheKey, user, cacheOptions);
+
+                return Ok(new { message = "Your profile password has been updated." });
             }
             catch (AppException ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+
+        // [HttpPatch("/api/updatepassword/{id}")]        
+        // public async Task<IActionResult> updateUserPassword(int id, [FromBody]UserPasswordUpdate model) {
+        //     var user = _mapper.Map<User>(model);
+        //     user.Id = id;
+        //     try
+        //     {
+        //         await _userService.UpdatePassword(user, model.Password);
+        //         return Ok(new {message="Your profile password has been updated.",user = model});
+        //     }
+        //     catch (AppException ex)
+        //     {
+        //         return BadRequest(new { message = ex.Message });
+        //     }
+        // }
     }
 }

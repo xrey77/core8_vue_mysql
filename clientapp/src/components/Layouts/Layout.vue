@@ -8,7 +8,7 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue';
-    import Header from '../Layouts/Header/Header.vue'
+    import Header from '../Layouts/Header/AppHeader.vue'
     import Footer from '../Layouts/Footer/Footer.vue'
 
     export default defineComponent({

@@ -24,7 +24,7 @@ builder.Services.AddResponseCompression(options =>
 {
     options.EnableForHttps = true; // Required if using HTTPS
 });
-
+builder.Services.AddMemoryCache();
 builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => {
@@ -76,9 +76,27 @@ builder.Services.AddSwaggerGen(c =>
     });
 
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        policy =>
+        {
+            policy.WithOrigins(
+                      "https://localhost:7241",
+                      "http://localhost:5119",
+                      "http://localhost:8080", 
+                      "https://localhost:8080", // Add HTTPS version
+                      "http://192.168.1.7:8080",
+                      "https://192.168.1.7:8080" // Add HTTPS version
+                  )
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials(); // Often required for Auth/Identity
+        });
+});
+
 builder.Services.AddSpaStaticFiles(options => { options.RootPath = "clientapp/dist"; });
 builder.Services.AddRazorPages();
-builder.Services.AddCors();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -112,10 +130,11 @@ if (app.Environment.IsDevelopment())
     app.UseHsts();
 }
 app.UseHttpsRedirection();
-app.UseCors( options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+app.UseStaticFiles(); // Serve static files from wwwroot
+app.UseRouting();
+app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseStaticFiles(); // Serve static files from wwwroot
 
 app.UseStatusCodePages(async context =>
     {
@@ -135,6 +154,7 @@ app.UseStatusCodePages(async context =>
         }
     });
 app.UseResponseCompression();
+app.MapControllers(); 
 app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
@@ -142,4 +162,4 @@ app.MapControllerRoute(
 
 app.Run();
 
-public partial class Program { }
+// public partial class Program { }

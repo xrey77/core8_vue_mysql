@@ -203,34 +203,25 @@ export default defineComponent({
             Authorization: `Bearer ${this.token}`
         }} )
             .then((res) => {
-                if (res.data.statuscode == 200) {
-                    this.profileMsg = res.data.user.message;
-                    this.firstname = res.data.user.firstname;
-                    this.lastname = res.data.user.lastname;
-                    this.email = res.data.user.email;
-                    this.mobile = res.data.user.mobile;
-                    this.profilepic = res.data.user.profilepic;
-                    this.qrcodeurl = res.data.user.qrcodeurl;
-                    return;
+                console.log(res.data);
+                this.profileMsg = res.data.message;
+                this.firstname = res.data.user.firstName;
+                this.lastname = res.data.user.lastName;
+                this.email = res.data.user.email;
+                this.mobile = res.data.user.mobile;
+                this.profilepic = res.data.user.profilepic;
+                this.qrcodeurl = res.data.user.qrcodeurl;
+                setTimeout(() => { this.profileMsg = ''; }, 1000);
+                return;
+            }, (error: AxiosError<ApiError>) => {       
+                if (error.response) {
+                    this.profileMsg = error.response.data.message;
                 } else {
-                    this.profileMsg = res.data.message;
-                    setTimeout(() => {
-                        this.profileMsg = '';
-                    }, 3000);
-                }
-                }, (error: AxiosError<ApiError>) => {       
-                    if (error.response) {
-                        this.profileMsg = error.response.data.message;
-                    } else {
-                        this.profileMsg = error.message;
-                    }                 
-                    setTimeout(() => {
-                        this.profileMsg = '';
-                    }, 3000);
-                    return;
+                    this.profileMsg = error.message;
+                }                 
+                setTimeout(() => { this.profileMsg = ''; }, 3000);
+                return;
             });
-
-
     },
     methods: {
         submitProfile: function() {
@@ -241,19 +232,11 @@ export default defineComponent({
             Authorization: `Bearer ${this.token}`
             }} )
             .then((res) => {
-                if (res.data.statuscode == 200) {
                     this.profileMsg = res.data.message;
                     window.setTimeout(() => {
                         this.profileMsg = '';
                     }, 3000);
                     return;
-                } else {
-                  this.profileMsg = res.data.message;
-                  window.setTimeout(() => {
-                        this.profileMsg = '';
-                    }, 3000);
-                    return;
-                }
                 }, (error: AxiosError<ApiError>) => {       
                     if (error.response) {
                         this.profileMsg = error.response.data.message;
@@ -380,8 +363,7 @@ export default defineComponent({
         },
         enableMFA: function() {
             const data =JSON.stringify({ Twofactorenabled: true });
-            api.put("/api/enablemfa/" + this.userid, data, { headers: {
-            'Content-Type': 'application/json',
+            api.patch(`/api/activatemfa/${this.userid}`, data, { headers: {
             Authorization: `Bearer ${this.token}`
             }} )
             .then((res) => {
@@ -405,7 +387,7 @@ export default defineComponent({
         },
         disableMFA: function() {
             const data =JSON.stringify({ Twofactorenabled: false });
-            api.put("/api/enablemfa/" + this.userid, data, { headers: {
+            api.patch(`/api/activatemfa/${this.userid}`, data, { headers: {
                 Authorization: `Bearer ${this.token}`
             }} )
             .then((res) => {

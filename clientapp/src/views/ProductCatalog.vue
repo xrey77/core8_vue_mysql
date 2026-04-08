@@ -39,6 +39,10 @@ const getCatalogs = async (targetPage: number) => {
         catalogs.value = res.data.products;
         totpage.value = res.data.totpage;
         page.value = res.data.page;
+        if (catalogs.value.length === 0)  {
+            message.value = "No Products found.";
+            setTimeout(() => { message.value = ''; }, 3000);        
+        }
     } catch (err) { // <--- Changed from: }, (error: AxiosError<ApiError>) => {
         const error = err as AxiosError<ApiError>; // Cast error for TypeScript
         
@@ -111,7 +115,7 @@ onMounted(() => {
         <div class="card-header bg-light rounded hdr">
             Product Catalogs
         </div>        
-        <div v-if="message" class="text-danger">{{ message }}</div>
+        <div v-if="message" class="text-center text-danger">{{ message }}</div>
 
         <div class="card-group">
             <div v-for="prod in catalogs" :key="prod.id" class="card">
@@ -129,7 +133,7 @@ onMounted(() => {
                 </div>  
             </div>
         </div>    
-
+        <div v-if="totpage > 1">
         <nav aria-label="Page navigation example">
             <ul class="pagination mt-4">
                 <li class="page-item"><a @click="lastPage" class="page-link" href="#">Last</a></li>
@@ -139,5 +143,6 @@ onMounted(() => {
                 <li class="page-item page-link text-danger">Page&nbsp;{{ page }} of&nbsp;{{ totpage }}</li>
             </ul>
         </nav>
+        </div>
     </div>
 </template>

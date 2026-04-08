@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <h1 class="text-center">Product List</h1>
-    <div class="text-danger">{{message}}</div>
+    <div class="text-center text-danger">{{message}}</div>
     <table class="table">
         <thead>
           <tr>
@@ -23,17 +23,18 @@
         </tbody>
     </table>    
     <!-- return new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(rawNumber.value); -->
-    <nav aria-label="Page navigation example">
-        <ul class="pagination">
-          <li class="page-item"><a @click="lastPage($event)" class="page-link" href="#">Last</a></li>
-          <li class="page-item"><a @click="prevPage($event)" class="page-link" href="#">Previous</a></li>
-          <li class="page-item"><a @click="nextPage($event)" class="page-link" href="#">Next</a></li>
-          <li class="page-item"><a @click="firstPage($event)" class="page-link" href="#">First</a></li>
-          <li class="page-item page-link text-danger">Page&nbsp;{{page}} of&nbsp;{{totpage}}</li>
+    <div v-if="totpage > 1">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+            <li class="page-item"><a @click="lastPage($event)" class="page-link" href="#">Last</a></li>
+            <li class="page-item"><a @click="prevPage($event)" class="page-link" href="#">Previous</a></li>
+            <li class="page-item"><a @click="nextPage($event)" class="page-link" href="#">Next</a></li>
+            <li class="page-item"><a @click="firstPage($event)" class="page-link" href="#">First</a></li>
+            <li class="page-item page-link text-danger">Page&nbsp;{{page}} of&nbsp;{{totpage}}</li>
 
-        </ul>
-      </nav>
-
+            </ul>
+        </nav>
+    </div>        
   </div>        
 </template>
 
@@ -71,6 +72,10 @@ export default defineComponent({
                 this.prods = res.data.products;
                 this.totpage = res.data.totpage;
                 this.page = res.data.page;
+                if (this.prods.length == 0) {
+                    this.message = "No Products found.";
+                    setTimeout(() => { this.message = ''; }, 3000);
+                }
             }, (error: any) => {
                     if (error.response) {
                         this.message = error.response.data.message;

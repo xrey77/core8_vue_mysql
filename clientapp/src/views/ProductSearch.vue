@@ -1,10 +1,10 @@
 <template>
 <div class="container-fluid mb-4">
     <h2>Search Product</h2>    
-    <div class="text-danger">{{message}}</div>
     <form class="row g-3" @submit.prevent="getProdsearch(page)" autocomplete="off">
         <div class="col-auto">
           <input type="text" required class="form-control-sm" v-model="search" name="search" placeholder="enter Product keyword">
+          <div class="text-danger">{{message}}</div>
         </div>
         <div class="col-auto">
           <button type="submit" class="btn btn-primary btn-sm mb-3">search</button>
@@ -26,7 +26,8 @@
             </div>
         
         </div>    
-        <nav aria-label="Page navigation example">
+        <div v-if="totpage > 1">
+         <nav aria-label="Page navigation example">
             <ul class="pagination mt-2 mb-4">
                 <li class="page-item"><a @click="firstPage($event)" class="page-link" href="#">First</a></li>
                 <li class="page-item"><a @click="prevPage($event)" class="page-link" href="#">Previous</a></li>
@@ -34,7 +35,8 @@
                 <li class="page-item"><a @click="lastPage($event)" class="page-link" href="#">Last</a></li>              
                 <li class="page-item page-link text-danger">Page&nbsp;{{page}} of&nbsp;{{totpage}}</li>
             </ul>
-          </nav>
+         </nav>
+        </div>
     </div>
 
 </div>
@@ -102,6 +104,10 @@
                     this.prodsearch = res.data.products;
                     this.totpage = res.data.totpage;
                     this.page = res.data.page;
+                    if (this.prodsearch.length == 0) {
+                        this.message = "No record(s) found.";
+                        setTimeout(() => { this.message = ''; }, 3000);
+                    }
                 }, (error: any) => {
                         if (error.response) {
                             this.message = error.response.data.message;

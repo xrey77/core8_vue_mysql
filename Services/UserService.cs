@@ -18,7 +18,7 @@ namespace core8_vue_mysql.Services
         void Delete(int id);
         Task ActivateMfa(int id, bool opt, string qrcode_url);
         void UpdatePicture(int id, string file);
-        Task UpdatePassword(User user, string password = null);
+        Task UpdatePassword(User user, string password);
         int EmailToken(int etoken);
         int SendEmailToken(string email);
         void ActivateUser(int id);
@@ -102,7 +102,7 @@ namespace core8_vue_mysql.Services
             await _context.SaveChangesAsync();            
         }
 
-        public async Task UpdatePassword(User userParam, string password = null)
+        public async Task UpdatePassword(User userParam, string password)
         {
             var user = await _context.Users.FindAsync(userParam.Id);
             if (user is null)
@@ -142,7 +142,7 @@ namespace core8_vue_mysql.Services
             var user = _context.Users.Find(id);
             if (user != null)
             {
-                user.Profilepic = file;
+                user.Profilepic = file ?? string.Empty;
                 _context.Users.Update(user);
                 _context.SaveChanges();
             }

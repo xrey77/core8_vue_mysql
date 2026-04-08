@@ -42,16 +42,44 @@ namespace core8_vue_mysql.Controllers.Users {
         }  
 
         [HttpGet]
-        public  async Task<IActionResult> getByuserid(int id) {
+        public async Task<IActionResult> getByuserid(int id) 
+        {
+            try 
+            {
+                string cacheKey = $"user_{id}";
 
+                // Try to get the user from cache, or fetch and save if missing
+                var model = await _cache.GetOrCreateAsync(cacheKey, entry => 
+                {
+                    // Set cache expiration (e.g., 10 minutes)
+                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+                    entry.SlidingExpiration = TimeSpan.FromMinutes(2);
+                    
+                    _logger.LogInformation($"Cache miss for user {id}. Fetching from database.");
 
-            try {
-                var user = await _userService.GetById(id);
-                var model = _mapper.Map<UserModel>(user);
-                return Ok(new {message = "User found, retrieving record, please wait.",user = model});
-            } catch(AppException ex) {
-                return BadRequest(new {message = ex.Message});
+                    // Fetch from service and map to DTO
+                    var user = _userService.GetById(id).Result; 
+                    return Task.FromResult(_mapper.Map<UserModel>(user));
+                });
+
+                return Ok(new { 
+                    message = "User found, retrieving record, please wait.", 
+                    user = model 
+                });
+            } 
+            catch (AppException ex) 
+            {
+                return BadRequest(new { message = ex.Message });
             }
-        }
+        }        
+        // public  async Task<IActionResult> getByuserid(int id) {
+        //     try {
+        //         var user = await _userService.GetById(id);
+        //         var model = _mapper.Map<UserModel>(user);
+        //         return Ok(new {message = "User found, retrieving record, please wait.",user = model});
+        //     } catch(AppException ex) {
+        //         return BadRequest(new {message = ex.Message});
+        //     }
+        // }
     }
 }
