@@ -1,5 +1,5 @@
 SPA - Single Page Application
-.NET CORE 8 CLI, VueJS 3 CLI (typescript) and MySql starter project
+.NET CORE 8 CLI, IMemoryCache, VueJS 3 CLI (typescript) and MySql starter project
 
 Dependencies
 1. node 23.5.0
