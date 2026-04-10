@@ -1,5 +1,5 @@
-SPA - Single Page Application
-.NET CORE 8 CLI, IMemoryCache, VueJS 3 CLI (typescript) and MySql starter project
+<h3>SPA - Single Page Application</h3>
+<h3>.NET CORE 8 CLI, VueJS 3 CLI (typescript) and MySql starter project</h3>
 
 Dependencies
 1. node 23.5.0
@@ -24,6 +24,7 @@ Features :
 5. User Account Activation via Email
 6. Swagger RESTful API Documentation, https://localhost:7241/swagger/index.html
 7. E2E Async xUnit Testing
+8. IMemoryCache
 
 If you want to test, do the following:
 1. Setup MySql Server 8.0.25
